@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "0",
+    "0",
+    "0"
+  ],
+  "key": {
+    "0": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "knightarmorweapons:knight_long_sword_blade",
+    "count": 1
+  }
+}

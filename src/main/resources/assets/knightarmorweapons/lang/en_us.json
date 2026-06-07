@@ -1,0 +1,18 @@
+{
+  "itemGroup.knightarmorweapons": "Knight Armor & Weapons",
+
+  "item.knightarmorweapons.knight_helmet": "Knight Helmet",
+  "item.knightarmorweapons.knight_chestplate": "Knight Chestplate",
+  "item.knightarmorweapons.knight_leggings": "Knight Leggings",
+  "item.knightarmorweapons.knight_boots": "Knight Boots",
+
+  "item.knightarmorweapons.knight_long_sword": "Knight Longsword",
+  "item.knightarmorweapons.knight_spiked_mace": "Spiked Mace",
+  "item.knightarmorweapons.knight_war_sickle": "Hand Scythe",
+  "item.knightarmorweapons.knight_throwing_axe": "Throwing Axe",
+  "item.knightarmorweapons.knight_throwing_axe_broken": "Broken Throwing Axe",
+
+  "item.knightarmorweapons.knight_long_sword_handle": "Knight Longsword Handle",
+  "item.knightarmorweapons.knight_long_sword_blade": "Knight Longsword Blade"
+}
+

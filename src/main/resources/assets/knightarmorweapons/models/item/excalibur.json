@@ -1,0 +1,8 @@
+{
+  "parent": "knightarmorweapons:custom/knight_long_sword",
+  "textures": {
+    "0": "knightarmorweapons:block/tophalfkingswordtext",
+    "1": "knightarmorweapons:block/bottomhalfkingswordtext",
+    "particle": "knightarmorweapons:item/knightgodsword"
+  }
+}

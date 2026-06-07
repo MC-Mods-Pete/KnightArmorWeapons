@@ -1,0 +1,7 @@
+{
+  "parent": "knightarmorweapons:custom/knight_war_sickle",
+  "textures": {
+    "0": "knightarmorweapons:block/knight_war_sickle",
+    "particle": "knightarmorweapons:item/knight_war_sickle"
+  }
+}

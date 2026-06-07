@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " ",
+    "0",
+    "1"
+  ],
+  "key": {
+    "0": {
+      "item": "knightarmorweapons:knight_long_sword_blade"
+    },
+    "1": {
+      "item": "knightarmorweapons:knight_long_sword_handle"
+    }
+  },
+  "result": {
+    "item": "knightarmorweapons:knight_long_sword",
+    "count": 1
+  }
+}

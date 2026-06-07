@@ -1,0 +1,7 @@
+{
+  "parent": "knightarmorweapons:custom/knight_long_sword",
+  "textures": {
+    "0": "knightarmorweapons:block/knight_long_sword",
+    "particle": "knightarmorweapons:item/knight_long_sword_item"
+  }
+}

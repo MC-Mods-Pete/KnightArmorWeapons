@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "knightarmorweapons:item/knight_long_sword_handle"
+  }
+}
+

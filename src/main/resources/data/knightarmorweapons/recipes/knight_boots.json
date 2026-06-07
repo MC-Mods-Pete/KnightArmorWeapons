@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "L L",
+    "IBI",
+    "I I"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "L": { "item": "minecraft:leather" },
+    "B": { "item": "minecraft:iron_boots" }
+  },
+  "result": {
+    "item": "knightarmorweapons:knight_boots",
+    "count": 1
+  }
+}

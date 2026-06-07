@@ -1,0 +1,7 @@
+{
+  "parent": "knightarmorweapons:custom/knight_throwing_axe",
+  "textures": {
+    "1": "knightarmorweapons:block/knight_throwing_axe",
+    "particle": "knightarmorweapons:item/knight_throwing_axe"
+  }
+}

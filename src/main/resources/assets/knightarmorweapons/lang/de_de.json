@@ -1,0 +1,18 @@
+{
+  "itemGroup.knightarmorweapons": "Knight Armor & Weapons",
+
+  "item.knightarmorweapons.knight_helmet": "Ritterhelm",
+  "item.knightarmorweapons.knight_chestplate": "Ritterharnisch",
+  "item.knightarmorweapons.knight_leggings": "Ritterbeinschutz",
+  "item.knightarmorweapons.knight_boots": "Ritterstiefel",
+
+  "item.knightarmorweapons.knight_long_sword": "Ritterlangschwert",
+  "item.knightarmorweapons.knight_spiked_mace": "Stachelkeule",
+  "item.knightarmorweapons.knight_war_sickle": "Handsense",
+  "item.knightarmorweapons.knight_throwing_axe": "Wurfaxt",
+  "item.knightarmorweapons.knight_throwing_axe_broken": "Zerbrochene Wurfaxt",
+
+  "item.knightarmorweapons.knight_long_sword_handle": "Ritterlangschwert Griff",
+  "item.knightarmorweapons.knight_long_sword_blade": "Ritterlangschwert Klinge"
+}
+

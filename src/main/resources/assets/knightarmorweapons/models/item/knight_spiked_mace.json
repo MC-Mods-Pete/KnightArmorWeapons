@@ -1,0 +1,7 @@
+{
+  "parent": "knightarmorweapons:custom/knight_spiked_mace",
+  "textures": {
+    "0": "knightarmorweapons:block/knight_spiked_mace",
+    "particle": "knightarmorweapons:item/knight_spiked_mace_item"
+  }
+}
