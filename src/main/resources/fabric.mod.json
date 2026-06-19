@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${version}",
+	"name": "${mod_name}",
+	"description": "This mod adds Knight Armor and Weapons to Minecraft.",
+	"authors": [
+		"Pete MC Mods, mcmods.pete@gmail.com"
+	],
+	"contact": {
+
+	},
+	"license": "All rights reserved",
+	"icon": "icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.petemc.knightarmorweapons.KnightArmorWeapons"
+		]
+	},
+	"depends": {
+		"fabricloader": "${fabric_version_range}",
+		"minecraft": "${mc_version_range}",
+		"java": "${java_version_range}",
+		"fabric-api": "*",
+		"cloth-config": ">=${cloth_config_version}"
+	},
+	"suggests": {
+		"modmenu": ">=${modmenu_version}",
+		"another-mod": "*"
+	}
+}
