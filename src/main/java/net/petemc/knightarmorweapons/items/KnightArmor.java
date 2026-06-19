@@ -15,19 +15,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.armor.ModArmorMaterials;
 import net.petemc.knightarmorweapons.client.model.KnightArmorModel;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class KnightArmor extends ArmorItem {
-    public KnightArmor(EquipmentSlot pSlot, Properties pProperties) {
-        super(ModArmorMaterials.KNIGHT, pSlot, pProperties);
+    public KnightArmor(ArmorItem.Type type, Properties pProperties) {
+        super(ModArmorMaterials.KNIGHT, type, pProperties);
     }
 
     public static class Helmet extends KnightArmor {
         public Helmet() {
-            super(EquipmentSlot.HEAD, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(ArmorItem.Type.HELMET, (new Item.Properties()));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -56,7 +55,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Chestplate extends KnightArmor {
         public Chestplate() {
-            super(EquipmentSlot.CHEST, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(ArmorItem.Type.CHESTPLATE, (new Item.Properties()));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -86,7 +85,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Leggings extends KnightArmor {
         public Leggings() {
-            super(EquipmentSlot.LEGS, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(Type.LEGGINGS, (new Item.Properties()));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -116,7 +115,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Boots extends KnightArmor {
         public Boots() {
-            super(EquipmentSlot.FEET, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(Type.BOOTS, (new Item.Properties()));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {

@@ -2,7 +2,6 @@ package net.petemc.knightarmorweapons.events;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
@@ -11,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.items.HandScythe;
 
@@ -36,10 +34,11 @@ import java.util.Set;
 public class HandScytheCombatEvents {
 
     /**
-     * Custom DamageSource message ID used for cleave hits.
-     * Checked in onLivingHurt to prevent infinite cleave → cleave loops.
+     * Thread-safe set of entity IDs that are currently receiving cleave damage.
+     * Prevents infinite cleave → cleave loops in onLivingHurt.
      */
-    private static final String CLEAVE_SOURCE_ID = "hand_scythe_cleave";
+    private static final Set<Integer> pendingCleave =
+            Collections.synchronizedSet(new HashSet<>());
 
     /**
      * Thread-safe set of entity IDs whose shield block was just bypassed by the Hand Scythe.
@@ -75,7 +74,7 @@ public class HandScytheCombatEvents {
         DamageSource source = event.getSource();
 
         // ── Loop guard: ignore our own cleave damage to prevent infinite recursion ──
-        if (source.getMsgId().equals(CLEAVE_SOURCE_ID)) return;
+        if (pendingCleave.contains(event.getEntity().getId())) return;
 
         // ── Guard: must be a direct player attack ──
         Entity directAttacker = source.getDirectEntity();
@@ -148,11 +147,11 @@ public class HandScytheCombatEvents {
         // ────────────────────────────────────────────────────────────────────
         float cleaveDamage = damage * 0.50f;
 
-        // Custom source tags this hit as "cleave" so the loop guard ignores it
-        DamageSource cleaveSource = new EntityDamageSource(CLEAVE_SOURCE_ID, player);
+        // Custom source: reuse player's standard attack source (loop guard uses pendingCleave set)
+        DamageSource cleaveSource = target.level().damageSources().playerAttack(player);
 
         // Find nearby living entities (2-block radius), excluding primary target and player
-        List<LivingEntity> nearbyEnemies = target.level.getEntitiesOfClass(
+        List<LivingEntity> nearbyEnemies = target.level().getEntitiesOfClass(
                 LivingEntity.class,
                 target.getBoundingBox().inflate(2.0),
                 nearby -> nearby != target
@@ -165,8 +164,10 @@ public class HandScytheCombatEvents {
         for (LivingEntity cleaveTarget : nearbyEnemies) {
             if (cleaveCount >= 2) break; // max 2 additional targets
 
-            // Deal cleave damage (loops back into onLivingHurt but exits via loop guard)
+            // Deal cleave damage (pendingCleave set prevents onLivingHurt from triggering again)
+            pendingCleave.add(cleaveTarget.getId());
             cleaveTarget.hurt(cleaveSource, cleaveDamage);
+            pendingCleave.remove(cleaveTarget.getId());
 
             // Apply moderate knockback away from the player
             double dx = cleaveTarget.getX() - player.getX();

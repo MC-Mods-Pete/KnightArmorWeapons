@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 public class ThrowingAxe extends Item {
 
     public ThrowingAxe() {
-        super((new Item.Properties()).tab(KnightArmorWeapons.TAB).stacksTo(8));
+        super((new Item.Properties()).stacksTo(8));
     }
 
     @Override
@@ -59,12 +59,12 @@ public class ThrowingAxe extends Item {
 
     @Override
     public boolean hurtEnemy(@NotNull ItemStack pStack, @NotNull LivingEntity pTarget, LivingEntity pAttacker) {
-        if (!pAttacker.level.isClientSide() && pAttacker instanceof Player player) {
+        if (!pAttacker.level().isClientSide() && pAttacker instanceof Player player) {
             KnightArmorWeapons.LOGGER.info("Throwing Axe hit an entity!");
             if (pAttacker.getRandom().nextFloat() < 0.50f) {
                 KnightArmorWeapons.LOGGER.info("Throwing Axe broke on hit!");
                 // 10% chance: axe breaks
-                pAttacker.level.playSound(null,
+                pAttacker.level().playSound(null,
                         pAttacker.getX(), pAttacker.getY(), pAttacker.getZ(),
                         SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
 

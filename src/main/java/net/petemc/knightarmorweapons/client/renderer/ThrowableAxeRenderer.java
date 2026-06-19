@@ -1,15 +1,15 @@
 package net.petemc.knightarmorweapons.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.petemc.knightarmorweapons.entity.ThrowableAxeEntity;
 import net.petemc.knightarmorweapons.items.ModItems;
@@ -33,24 +33,25 @@ public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity> {
         poseStack.scale(1.0F, 1.0F, 1.0F);
 
         // 1. Rotate horizontally to face flight direction (Yaw)
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(entity.getYRot() + 180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot() + 180.0F));
 
         // 2. Tilt vertically (Pitch)
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(-entity.getXRot()));
+        poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
 
         // 3. Forward tumble of the axe (freezes on impact)
         float angle = Mth.lerp(partialTick, entity.lastRotation, entity.rotation);
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(angle));
+        poseStack.mulPose(Axis.XP.rotationDegrees(angle));
 
         // Render item with NONE transform (no JSON transform = clean XY-plane, upright)
         ItemStack stack = new ItemStack(ModItems.THROWING_AXE.get());
         this.itemRenderer.renderStatic(
                 stack,
-                ItemTransforms.TransformType.NONE,
+                ItemDisplayContext.NONE,
                 packedLight,
                 OverlayTexture.NO_OVERLAY,
                 poseStack,
                 buffer,
+                entity.level(),
                 entity.getId()
         );
 

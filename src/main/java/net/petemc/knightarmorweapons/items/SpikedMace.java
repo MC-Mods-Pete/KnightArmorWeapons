@@ -52,7 +52,7 @@ public class SpikedMace extends SwordItem {
         },
         1,      // attackDamageModifier → total = 1 + 7 + 1 = 9.0 damage
         -3.2F,  // attackSpeedModifier  → final = 4.0 + (-3.2) = 0.8F (extremely slow)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1).fireResistant());
+        new Item.Properties().stacksTo(1));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -72,7 +72,7 @@ public class SpikedMace extends SwordItem {
             builder.putAll(super.getAttributeModifiers(slot, stack));
             // Minimal reach penalty: -0.3 blocks (was -1.0, reduced after playtest)
             builder.put(
-                    ForgeMod.ATTACK_RANGE.get(),
+                    ForgeMod.ENTITY_REACH.get(),
                     new AttributeModifier(
                             REACH_MODIFIER_UUID,
                             "Spiked Mace Short Reach",
