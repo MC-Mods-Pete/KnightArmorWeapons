@@ -1,5 +1,6 @@
 package net.petemc.knightarmorweapons.entity;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +27,8 @@ public class ModEntities {
     }
 
     public static void registerAll() {
-        // All entities are registered in the static block above
+        // Entities werden über den statischen Block registriert.
+        // In Fabric wird diese Methode typischerweise in der onInitialize()-Methode 
+        // deiner Hauptmod-Klasse aufgerufen, um die Lifecycle-Hooks von Fabric zu respektieren.
     }
 }
