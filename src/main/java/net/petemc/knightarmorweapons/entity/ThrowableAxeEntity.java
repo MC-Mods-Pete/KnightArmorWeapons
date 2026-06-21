@@ -1,23 +1,26 @@
 package net.petemc.knightarmorweapons.entity;
 
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.entity.SpawnGroup;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
+
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.sound.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.petemc.knightarmorweapons.items.ModItems;
 
 public class ThrowableAxeEntity extends AbstractArrow {
 
-    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, World world) {
+    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, Level world) {
         super(type, world);
     }
 
@@ -50,7 +53,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
 
         /*
         // Calculate actual damage and print to chat
-        if (!this.level.isClientSide() && pResult.getEntity() instanceof LivingEntity target
+        if (!this.level().isClientSide() && pResult.getEntity() instanceof LivingEntity target
                 && this.getOwner() instanceof Player shooter) {
             float hpAfter = target.getHealth();
             float actualDamage = hpBefore - hpAfter;
@@ -67,7 +70,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         }
 
         // 10% chance to break on entity hit
-        boolean broken = this.random.nextFloat() < 0.10f;
+        boolean broken = this.getRandom().nextFloat() < 0.10f;
         dropAndDiscard(broken);
     }
 
@@ -76,7 +79,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         // Don't stick in the ground – drop as a floating item instead
         super.onHitBlock(pResult);
         // 30% chance to break on block hit
-        boolean broken = this.random.nextFloat() < 0.25f;
+        boolean broken = this.getRandom().nextFloat() < 0.25f;
         dropAndDiscard(broken);
     }
 
@@ -96,7 +99,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
                     this.level(), this.getX(), this.getY(), this.getZ(), drop
             );
             itemEntity.setDefaultPickUpDelay();
-            itemEntity.lifespan = Integer.MAX_VALUE;  // never despawn
+            itemEntity.age = Integer.MAX_VALUE;  // never despawn (Yarn 1.20.1 uses 'age')
             this.level().addFreshEntity(itemEntity);
             this.discard();
         }
@@ -137,14 +140,4 @@ public class ThrowableAxeEntity extends AbstractArrow {
         double dy = target.getY() + (double) target.getBbHeight() - 1.1;
         double dz = target.getZ() - entity.getZ();
         entityarrow.shoot(dx, dy - entityarrow.getY() + Math.hypot(dx, dz) * 0.2, dz, 2.5F, 12.0F);
-        entityarrow.setSilent(true);
-        entityarrow.setBaseDamage(16.0);
-        entityarrow.setKnockback(2);
-        entityarrow.setShotFromCrossbow(false);
-        entity.level().addFreshEntity(entityarrow);
-        entity.level().playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
-                SoundEvents.BLOCK_METAL_HIT,
-                SoundSource.PLAYERS, 1.0F, 1.0F / (RandomSource.create().nextFloat() * 0.5F + 1.0F));
-        return entityarrow;
-    }
-}
+        entity
