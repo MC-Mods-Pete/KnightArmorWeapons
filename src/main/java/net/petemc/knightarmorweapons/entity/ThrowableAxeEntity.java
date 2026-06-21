@@ -4,27 +4,27 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.World;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.petemc.knightarmorweapons.items.ModItems;
 
 public class ThrowableAxeEntity extends AbstractArrow {
 
-    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, Level world) {
+    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, World world) {
         super(type, world);
     }
 
-    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, double x, double y, double z, Level world) {
+    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, double x, double y, double z, World world) {
         super(type, x, y, z, world);
     }
 
-    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, LivingEntity entity, Level world) {
+    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, LivingEntity entity, World world) {
         super(type, entity, world);
     }
 
@@ -76,7 +76,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         }
     }
 
-    public static ThrowableAxeEntity shoot(Level world, LivingEntity entity, RandomSource random, float power, double damage, int knockback) {
+    public static ThrowableAxeEntity shoot(World world, LivingEntity entity, RandomSource random, float power, double damage, int knockback) {
         ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE, entity, world);
         var look = entity.getRotationVector();
         entityarrow.shoot(look.x, look.y, look.z, power * 2.0F, 0.0F);
@@ -85,7 +85,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         entityarrow.setBaseDamage(damage);
         entityarrow.setKnockback(knockback);
         world.addFreshEntity(entityarrow);
-        world.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
+        world.playSound((PlayerEntity) null, entity.getX(), entity.getY(), entity.getZ(),
                 SoundEvents.BLOCK_METAL_HIT,
                 SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0F);
         return entityarrow;

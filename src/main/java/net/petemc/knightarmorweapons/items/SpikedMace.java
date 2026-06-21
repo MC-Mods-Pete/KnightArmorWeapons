@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +40,7 @@ public class SpikedMace extends SwordItem {
             @Override public int getLevel()               { return 3; }
             @Override public int getEnchantmentValue()    { return 15; }
             @Override public @NotNull Ingredient getRepairIngredient() {
-                return Ingredient.ofStacks(
+                return Ingredient.of(
                         new ItemStack(Items.IRON_INGOT),
                         new ItemStack(Items.FLINT));
             }
