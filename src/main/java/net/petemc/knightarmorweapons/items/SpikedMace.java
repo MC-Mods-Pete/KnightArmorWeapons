@@ -2,12 +2,12 @@ package net.petemc.knightarmorweapons.items;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.item.*;
+import net.minecraft.recipe.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -42,7 +42,7 @@ public class SpikedMace extends SwordItem {
             @Override public int getLevel()               { return 3; }
             @Override public int getEnchantmentValue()    { return 15; }
             @Override public @NotNull Ingredient getRepairIngredient() {
-                return Ingredient.of(
+                return Ingredient.ofStacks(
                         new ItemStack(Items.IRON_INGOT),
                         new ItemStack(Items.FLINT));
             }
@@ -59,49 +59,5 @@ public class SpikedMace extends SwordItem {
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(
-            EquipmentSlot slot, ItemStack stack) {
-
-        if (slot == EquipmentSlot.MAINHAND) {
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
-                    ImmutableMultimap.builder();
-            // Keep base SwordItem modifiers (attack damage + attack speed)
-            builder.putAll(super.getAttributeModifiers(slot, stack));
-            // Minimal reach penalty: -0.3 blocks (was -1.0, reduced after playtest)
-            builder.put(
-                    Attributes.ATTACK_RANGE,
-                    new AttributeModifier(
-                            REACH_MODIFIER_UUID,
-                            "Spiked Mace Short Reach",
-                            -0.3,
-                            AttributeModifier.Operation.ADDITION));
-            return builder.build();
-        }
-        return super.getAttributeModifiers(slot, stack);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // NO SWEEP: disable the sword sweep action (single-target weapon only)
-    // ─────────────────────────────────────────────────────────────────────────
-
-    @Override
-    public boolean canPerformAction(ItemStack stack, String action) {
-        if ("sword_sweep".equals(action)) return false; // heavy single-target, no sweep
-        return super.canPerformAction(stack, action);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Standard item helpers
-    // ─────────────────────────────────────────────────────────────────────────
-
-    @Override
-    public boolean hasCraftingRemainingItem(@Nonnull ItemStack stack) { return true; }
-
-    @Override
-    public @Nonnull ItemStack getCraftingRemainingItem(@Nonnull ItemStack stack) {
-        return new ItemStack(this);
-    }
-
-    @Override
-    public boolean isRepairable(@Nonnull ItemStack stack) { return false; }
-}
+    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(
+            Equipment
