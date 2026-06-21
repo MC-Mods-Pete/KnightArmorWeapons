@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -58,7 +59,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
     private void dropAndDiscard(boolean broken) {
         ItemStack drop = broken ? new ItemStack(ModItems.THROWING_AXE_BROKEN) : new ItemStack(ModItems.THROWING_AXE);
         ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), drop);
-        // In 1.20.1 Yarn wird die Despawn-Zeit direkt über das Feld 'age' gesteuert
+        // In Yarn 1.20.1 wird die Despawn-Zeit direkt über das Feld 'age' gesteuert
         itemEntity.age = Integer.MAX_VALUE;
         this.level().addFreshEntity(itemEntity);
         this.discard();
@@ -88,4 +89,21 @@ public class ThrowableAxeEntity extends AbstractArrow {
         world.addFreshEntity(entityarrow);
         world.playSound((PlayerEntity) null, entity.getX(), entity.getY(), entity.getZ(),
                 SoundEvents.BLOCK_METAL_HIT,
-                SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0
+                SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0F);
+        return entityarrow;
+    }
+
+    public static ThrowableAxeEntity shoot(LivingEntity entity, LivingEntity target) {
+        ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE, entity, entity.level());
+        double dx = target.getX() - entity.getX();
+        double dy = target.getY() + (double) target.getBbHeight() - 1.1;
+        double dz = target.getZ() - entity.getZ();
+        Vec3d direction = new Vec3d(dx, dy - entityarrow.getY() + Math.hypot(dx, dz) * 0.2, dz).normalize();
+        entityarrow.shoot(direction, 2.5F, 12.0F);
+        entityarrow.setSilent(true);
+        entityarrow.setShotFromCrossbow(false);
+        entityarrow.setBaseDamage(8.0);
+        entityarrow.setKnockback(2);
+        return entityarrow;
+    }
+}
