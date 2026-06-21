@@ -3,8 +3,8 @@ package net.petemc.knightarmorweapons.entity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnGroup;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
 public class ModEntities {
