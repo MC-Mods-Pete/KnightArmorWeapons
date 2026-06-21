@@ -2,7 +2,7 @@ package net.petemc.knightarmorweapons.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.sound.SoundSource;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,7 +39,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
 
         if (!this.level().isClientSide()) {
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                    SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    SoundEvents.PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
             boolean broken = this.getRandom().nextFloat() < 0.10f;
             dropAndDiscard(broken);
@@ -87,7 +87,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         world.addFreshEntity(entityarrow);
         world.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
                 SoundEvents.BLOCK_METAL_HIT,
-                SoundSource.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0F);
+                SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0F);
         return entityarrow;
     }
 
