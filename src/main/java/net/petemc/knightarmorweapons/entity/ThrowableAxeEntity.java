@@ -1,10 +1,13 @@
 package net.petemc.knightarmorweapons.entity;
 
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.World;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -14,17 +17,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.network.PlayMessages;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.petemc.knightarmorweapons.items.ModItems;
 
 public class ThrowableAxeEntity extends AbstractArrow {
 
-    public ThrowableAxeEntity(PlayMessages.SpawnEntity packet, Level world) {
-        super(ModEntities.THROWABLE_AXE.get(), world);
-    }
-
-    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, Level world) {
+    public ThrowableAxeEntity(EntityType<? extends ThrowableAxeEntity> type, World world) {
         super(type, world);
     }
 
@@ -38,7 +35,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
 
     @Override
     public ItemStack getPickupItem() {
-        return new ItemStack(ModItems.THROWING_AXE.get());
+        return new ItemStack(ModItems.THROWING_AXE);
     }
 
     @Override
@@ -91,8 +88,8 @@ public class ThrowableAxeEntity extends AbstractArrow {
     private void dropAndDiscard(boolean broken) {
         if (!this.level().isClientSide()) {
             ItemStack drop = broken
-                    ? new ItemStack(ModItems.THROWING_AXE_BROKEN.get())
-                    : new ItemStack(ModItems.THROWING_AXE.get());
+                    ? new ItemStack(ModItems.THROWING_AXE_BROKEN)
+                    : new ItemStack(ModItems.THROWING_AXE);
 
             if (broken) {
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -124,7 +121,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
     }
 
     public static ThrowableAxeEntity shoot(Level world, LivingEntity entity, RandomSource random, float power, double damage, int knockback) {
-        ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE.get(), entity, world);
+        ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE, entity, world);
         var look = entity.getViewVector(1.0F);
         entityarrow.shoot(look.x, look.y, look.z, power * 2.0F, 0.0F);
         entityarrow.setSilent(true);
@@ -133,13 +130,13 @@ public class ThrowableAxeEntity extends AbstractArrow {
         entityarrow.setKnockback(knockback);
         world.addFreshEntity(entityarrow);
         world.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
-                (SoundEvent) ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse("block.metal.hit")),
+                SoundEvents.BLOCK_METAL_HIT,
                 SoundSource.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0F);
         return entityarrow;
     }
 
     public static ThrowableAxeEntity shoot(LivingEntity entity, LivingEntity target) {
-        ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE.get(), entity, entity.level());
+        ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE, entity, entity.level());
         double dx = target.getX() - entity.getX();
         double dy = target.getY() + (double) target.getBbHeight() - 1.1;
         double dz = target.getZ() - entity.getZ();
@@ -150,7 +147,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         entityarrow.setShotFromCrossbow(false);
         entity.level().addFreshEntity(entityarrow);
         entity.level().playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
-                (SoundEvent) ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse("block.metal.hit")),
+                SoundEvents.BLOCK_METAL_HIT,
                 SoundSource.PLAYERS, 1.0F, 1.0F / (RandomSource.create().nextFloat() * 0.5F + 1.0F));
         return entityarrow;
     }

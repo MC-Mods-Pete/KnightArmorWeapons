@@ -5,14 +5,11 @@ import com.google.common.collect.Multimap;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -72,7 +69,7 @@ public class SpikedMace extends SwordItem {
             builder.putAll(super.getAttributeModifiers(slot, stack));
             // Minimal reach penalty: -0.3 blocks (was -1.0, reduced after playtest)
             builder.put(
-                    ForgeMod.ENTITY_REACH.get(),
+                    Attributes.ATTACK_RANGE,
                     new AttributeModifier(
                             REACH_MODIFIER_UUID,
                             "Spiked Mace Short Reach",
@@ -88,8 +85,8 @@ public class SpikedMace extends SwordItem {
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
-    public boolean canPerformAction(ItemStack stack, ToolAction action) {
-        if (action == ToolActions.SWORD_SWEEP) return false; // heavy single-target, no sweep
+    public boolean canPerformAction(ItemStack stack, String action) {
+        if ("sword_sweep".equals(action)) return false; // heavy single-target, no sweep
         return super.canPerformAction(stack, action);
     }
 

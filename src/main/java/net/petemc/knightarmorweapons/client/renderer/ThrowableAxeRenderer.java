@@ -43,7 +43,7 @@ public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity> {
         poseStack.mulPose(Axis.XP.rotationDegrees(angle));
 
         // Render item with NONE transform (no JSON transform = clean XY-plane, upright)
-        ItemStack stack = new ItemStack(ModItems.THROWING_AXE.get());
+        ItemStack stack = new ItemStack(ModItems.THROWING_AXE);
         this.itemRenderer.renderStatic(
                 stack,
                 ItemDisplayContext.NONE,

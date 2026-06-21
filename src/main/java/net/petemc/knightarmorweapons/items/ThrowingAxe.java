@@ -71,7 +71,7 @@ public class ThrowingAxe extends Item {
                 if (!player.getAbilities().instabuild) {
                     pStack.shrink(1);
                 }
-                ItemStack broken = new ItemStack(ModItems.THROWING_AXE_BROKEN.get());
+                ItemStack broken = new ItemStack(ModItems.THROWING_AXE_BROKEN);
                 if (!player.getInventory().add(broken)) {
                     player.drop(broken, false);
                 }
@@ -89,7 +89,7 @@ public class ThrowingAxe extends Item {
 
         if (!pLevel.isClientSide()) {
             ThrowableAxeEntity axe = new ThrowableAxeEntity(
-                    ModEntities.THROWABLE_AXE.get(), player, pLevel);
+                    ModEntities.THROWABLE_AXE, player, pLevel);
             axe.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.9F, 1.0F);
             axe.setBaseDamage(5.5);
             axe.setKnockback(1);

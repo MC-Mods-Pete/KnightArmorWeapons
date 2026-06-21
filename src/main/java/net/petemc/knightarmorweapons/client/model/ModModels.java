@@ -1,15 +1,15 @@
 package net.petemc.knightarmorweapons.client.model;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+/**
+ * Fabric-compatible model layer registration placeholder.
+ * In a real Fabric mod, call: EntityModelLayers.register(...) from your client entrypoint.
+ */
+public final class ModModels {
+    private ModModels() {}
 
-@EventBusSubscriber(bus = Bus.MOD, value = {Dist.CLIENT})
-public class ModModels {
-    @SubscribeEvent
-    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(KnightArmorModel.LAYER_LOCATION, KnightArmorModel::createBodyLayer);
+    /** Called during Fabric client initialization to register entity model layers. */
+    public static void registerModelLayers(EntityLayerRegistrationEvent event) {
+        // Register layer definitions for custom entities (if any)
+        // Example: event.registerLayerDefinition(KnightArmorModel.LAYER_LOCATION, KnightArmorModel::createBodyLayer);
     }
 }
