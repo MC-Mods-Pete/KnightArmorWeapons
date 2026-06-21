@@ -17,11 +17,11 @@ public class ModEntities {
     );
 
     /**
-     * Wird in der Hauptmod-Klasse (KnightArmorWeapons.java) aufgerufen,
-     * um sicherzustellen, dass alle Registrierungen im korrekten Fabric-Lifecycle erfolgen.
+     * Called from the main mod class (KnightArmorWeapons.java) to ensure
+     * all registrations occur within the correct Fabric lifecycle.
      */
     public static void registerEntities() {
-        // Die Registrierung erfolgt bereits über die statische Feldinitialisierung oben.
-        // Diese Methode dient als sauberer Hook für ModInitializer.onInitialize().
+        // Registration is already handled via the static field initialization above.
+        // This method serves as a clean hook for ModInitializer.onInitialize().
     }
 }
