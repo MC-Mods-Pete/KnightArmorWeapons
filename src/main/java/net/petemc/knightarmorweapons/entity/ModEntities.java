@@ -1,17 +1,16 @@
 package net.petemc.knightarmorweapons.entity;
 
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
 public class ModEntities {
     public static final EntityType<ThrowableAxeEntity> THROWABLE_AXE = Registry.register(
             Registries.ENTITY_TYPE,
-            ResourceLocation.fromNamespaceAndPath(KnightArmorWeapons.MOD_ID, "throwable_axe"),
-            EntityType.Builder.<ThrowableAxeEntity>create(ThrowableAxeEntity::new, MobCategory.MISC)
+            ResourceLocatio.fromNamespaceAndPath(KnightArmorWeapons.MOD_ID, "throwable_axe"),
+            EntityType.Builder.<ThrowableAxeEntity>create(ThrowableAxeEntity::new, SpawnGroup.MISC)
                     .sized(0.5f, 0.5f)
                     .build()
     );
