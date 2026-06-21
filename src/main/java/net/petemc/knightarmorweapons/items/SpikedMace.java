@@ -7,7 +7,6 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
-import net.minecraft.recipe.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -60,4 +59,27 @@ public class SpikedMace extends SwordItem {
 
     @Override
     public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(
-            Equipment
+            EquipmentSlot slot, ItemStack stack) {
+        Multimap<EntityAttribute, EntityAttributeModifier> modifiers = super.getAttributeModifiers(slot, stack);
+        if (slot == EquipmentSlot.MAINHAND) {
+            // Custom reach or damage modifiers can be injected here if needed.
+            // Combat-specific logic is handled in SpikedMaceCombatEvents.
+        }
+        return modifiers;
+    }
+
+    @Override
+    public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public @NotNull ItemStack getCraftingRemainingItem(@NotNull ItemStack stack) {
+        return new ItemStack(this);
+    }
+
+    @Override
+    public boolean isRepairable(@NotNull ItemStack stack) {
+        return false;
+    }
+}
