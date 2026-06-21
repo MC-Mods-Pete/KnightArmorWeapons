@@ -1,0 +1,5 @@
+
+Wait, `entity.level()` returns `World` in Yarn 1.20.1? Yes, `Entity.level()` maps to `World`.
+One minor thing: `shoot(double, double, double, float, float)` is the old signature. In 1.20.1, `AbstractArrow.shoot(Vec3d direction, float velocity, float inaccuracy)` is used. I already updated it to `entityarrow.shoot(look, power * 2.0F, 0.0F);`.
+The second `shoot` method uses the old signature: `entityarrow.shoot(dx, dy - entityarrow.getY() + Math.hypot(dx, dz) * 0.2, dz, 2.5F, 12.0F);`. I should update that to use `Vec3d` as well for consistency and correctness in 1.20.1.
+Let's fix it:

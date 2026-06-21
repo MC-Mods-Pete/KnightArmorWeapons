@@ -1,0 +1,24 @@
+        world.playSound((PlayerEntity) null, entity.getX(), entity.getY(), entity.getZ(),
+                SoundEvents.BLOCK_METAL_HIT,
+                SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0```
+The file content in the prompt is cut off at the end! It ends with `+ power / 2.0``` without closing the method or class.
+Ah, the user pasted the file content but it got truncated in their message: `... + power / 2.0```
+So I need to provide the complete file again, ensuring it's fully closed and correct according to Yarn 1.20.1 mappings.
+
+Let's verify Yarn 1.20.1 mappings for `ThrowableAxeEntity`:
+- `World` is correct per user guide (`net.minecraft.world.level.Level` -> `net.minecraft.world.World`).
+- `PlayerEntity` is correct (`net.minecraft.world.entity.player.Player` -> `net.minecraft.entity.player.PlayerEntity`).
+- `AbstractArrow` extends `ProjectileEntity`. In Yarn 1.20.1, `AbstractArrow` constructor takes `(EntityType<? extends AbstractArrow>, World)`, etc. Correct.
+- `getLookAngle()` returns `Vec3d`. `shoot(Vec3d direction, float velocity, float inaccuracy)` is correct for 1.20.1.
+- `level()` method on Entity returns `World` in Yarn? Wait, in Yarn 1.20.1, `Entity.level()` returns `World`. Yes.
+- `isClientSide()` is correct.
+- `playSound` signature: `playSound(@Nullable Entity except, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch)`. Correct.
+- `addFreshEntity` is correct.
+- `discard()` is correct.
+- `inGround` field is correct.
+- `age` field on `ItemEntity` is correct for 1.20.1.
+
+I will reconstruct the full file, ensuring it's complete and compiles correctly for Fabric Yarn 1.20.1. I'll also make sure to close all braces properly.
+
+Let's draft the complete `ThrowableAxeEntity.java`:
+
