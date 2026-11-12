@@ -20,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
  * Stats:
  *   Attack Damage : 9.0  (= 1 base + 7 tier bonus + 1 modifier)
  *   Attack Speed  : 0.8  (modifier = 0.8 - 4.0 = -3.2, slower than any axe)
- *   Sweep Attack  : disabled via Fabric mixin
+ *   Sweep Attack  : DISABLED (PlayerEntityMixin)
+ *   Reach         : -0.3 blocks (WeaponReach + GameRendererMixin)
  *
  * Unique mechanics:
  *   A) Shield Obliteration — guaranteed shield disable + 50% crushing damage (via AttackEntityCallback)

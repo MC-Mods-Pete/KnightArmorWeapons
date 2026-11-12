@@ -17,14 +17,12 @@ import org.jetbrains.annotations.NotNull;
  * Stats:
  *   Attack Damage : 7.0  (= 1 base + 5 tier bonus + 1 modifier)
  *   Attack Speed  : 1.4  (modifier = 1.4 - 4.0 = -2.6)
- *   Sweep Attack  : DISABLED via Fabric mixin
+ *   Sweep Attack  : DISABLED (PlayerEntityMixin)
+ *   Reach         : +1.2 blocks (WeaponReach + GameRendererMixin)
  *
  * Unique mechanics handled in KnightLongSwordCombatEvents (via LivingEntityMixin):
  *   B) Close-Quarters Penalty — -40% damage if enemy is closer than 1.8 blocks
  *   C) Fencer's Precision     — +20% damage if enemy is 3.5–4.5 blocks away
- *
- * Note: Attack range extension (Forge ForgeMod.ATTACK_RANGE) is not available
- *       in Fabric without an external mod (e.g. ReachEntityAttributes).
  */
 public class KnightLongSword extends SwordItem {
 
