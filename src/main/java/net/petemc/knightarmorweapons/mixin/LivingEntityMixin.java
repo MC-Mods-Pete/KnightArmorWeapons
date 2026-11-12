@@ -9,6 +9,8 @@ import net.petemc.knightarmorweapons.events.SpikedMaceCombatEvents;
 import net.petemc.knightarmorweapons.items.HandScythe;
 import net.petemc.knightarmorweapons.items.KnightLongSword;
 import net.petemc.knightarmorweapons.items.SpikedMace;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Weapons handled:
  *   - SpikedMace    → Armor Sunder + Shield Obliteration (50%)
  *   - KnightLongSword → Dead-Zone penalty / Sweet-Spot bonus
- *   - HandScythe    → Armor Penalty
+ *   - HandScythe    → Armor Penalty + Shield Bypass (50%)
  */
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
@@ -52,7 +54,7 @@ public abstract class LivingEntityMixin {
         } else if (player.getMainHandStack().getItem() instanceof KnightLongSword) {
             newAmount = KnightLongSwordCombatEvents.modifyDamage(self, newAmount, player);
         } else if (player.getMainHandStack().getItem() instanceof HandScythe) {
-            newAmount = HandScytheCombatEvents.modifyDamage(self, newAmount, player);
+            newAmount = HandScytheCombatEvents.modifyDamage(self, newAmount, player, source);
         }
 
         // If the damage was modified, reapply with the new amount
@@ -64,5 +66,20 @@ public abstract class LivingEntityMixin {
             cir.cancel();
         }
     }
-}
 
+    /**
+     * Hand Scythe Shield Bypass: a raised shield does not block the main hit
+     * (Forge: ShieldBlockEvent cancelled). The 50% damage penalty is applied in
+     * HandScytheCombatEvents.modifyDamage().
+     */
+    @WrapOperation(
+        method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z",
+        at = @At(value = "INVOKE",
+                 target = "Lnet/minecraft/entity/LivingEntity;blockedByShield(Lnet/minecraft/entity/damage/DamageSource;)Z")
+    )
+    private boolean knightmod_scytheShieldBypass(LivingEntity self, DamageSource source,
+                                                 Operation<Boolean> original) {
+        if (HandScytheCombatEvents.bypassesShield(self, source)) return false;
+        return original.call(self, source);
+    }
+}

@@ -1,6 +1,7 @@
 package net.petemc.knightarmorweapons.events;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -14,13 +15,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Handles the Armor-Penalty mechanic of the Hand Scythe.
+ * Handles the Armor-Penalty and Shield-Bypass mechanics of the Hand Scythe.
  * Called from LivingEntityMixin when a HandScythe performs a melee hit.
  *
  * Anti-Climb and Cleave are handled in HandScythe.postHit().
  *
  * Mechanics:
- *   A) Armor Penalty — 2.5% damage reduction per armor point (cap 50% at 20 pts)
+ *   A) Armor Penalty  — 2.5% damage reduction per armor point (cap 50% at 20 pts)
+ *   B) Shield Bypass  — the main hit goes through a raised shield but deals only 50% damage.
+ *                       LivingEntityMixin makes the shield check in damage() return false,
+ *                       cleave hits are blocked normally (same as Forge).
  */
 public class HandScytheCombatEvents {
 
@@ -40,10 +44,21 @@ public class HandScytheCombatEvents {
     public static final Map<Integer, Float> lastHitDamage = new ConcurrentHashMap<>();
 
     /**
-     * Modifies incoming damage according to the Hand Scythe's Armor Penalty.
+     * True if this damage is a Hand Scythe main hit, which ignores the target's shield.
+     * Cleave hits (pendingCleave) are blocked normally.
+     */
+    public static boolean bypassesShield(LivingEntity target, DamageSource source) {
+        if (pendingCleave.contains(target.getId())) return false;
+        return source.getSource() instanceof PlayerEntity player
+                && player.getMainHandStack().getItem() instanceof HandScythe;
+    }
+
+    /**
+     * Modifies incoming damage according to the Hand Scythe's Armor Penalty and Shield Bypass.
      * Called from LivingEntityMixin on every player attack that hits this target.
      */
-    public static float modifyDamage(LivingEntity target, float originalDamage, PlayerEntity attacker) {
+    public static float modifyDamage(LivingEntity target, float originalDamage, PlayerEntity attacker,
+                                     DamageSource source) {
         // Guard: skip cleave-secondary hits
         if (pendingCleave.contains(target.getId())) return originalDamage;
 
@@ -53,15 +68,23 @@ public class HandScytheCombatEvents {
         int armorValue = target.getArmor();
         float armorPenaltyFactor = Math.min(armorValue * 0.025f, 0.50f);
         float damage = originalDamage * (1.0f - armorPenaltyFactor);
+
+        // Shield Bypass: the raised shield would block this hit, half the damage goes through.
+        // blockedByShield() is called directly here, only the call inside damage() is overridden.
+        boolean shieldBypassed = bypassesShield(target, source) && target.blockedByShield(source);
+        if (shieldBypassed) {
+            damage *= 0.50f;
+        }
         lastHitDamage.put(target.getId(), damage);
 
         if (KnightArmorWeapons.DAMAGE_DEBUG && !target.getWorld().isClient) {
             float armorPenaltyPct = Math.min(armorValue * 2.5f, 50f);
             String armorTag = armorValue > 0 ? String.format(" §c[Armor -%.0f%%]§f", armorPenaltyPct) : "";
+            String shieldTag = shieldBypassed ? " §c[Shield ×0.5]§f" : "";
             attacker.sendMessage(Text.literal(
-                String.format("§5[HandScythe DEBUG]§f Raw: §c%.1f§f (%.1f)%s -> Final: §a%.1f§f (%.1f)",
+                String.format("§5[HandScythe DEBUG]§f Raw: §c%.1f§f (%.1f)%s%s -> Final: §a%.1f§f (%.1f)",
                     originalDamage, originalDamage / 2f,
-                    armorTag,
+                    armorTag, shieldTag,
                     damage, damage / 2f)), false);
         }
 
