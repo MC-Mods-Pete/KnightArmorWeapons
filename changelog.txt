@@ -1,0 +1,18 @@
+Knight Armor and Weapons Changelog
+==================================
+
+1.1.0-Forge-mc1.19.2
+--------------------
+New
+ - Hand Scythe: hits now go through raised shields, but only half of the damage gets through
+Fixes
+ - Knight armor was invisible when worn (missing texture)
+ - Crash at startup with Forge versions older than 43.4.19, the mod now works with every Forge version for 1.19.2
+ - Removed a debug chat message that appeared on every throwing axe hit
+ - Kills by the Hand Scythe cleave showed a raw death message
+Changes
+ - New throwing axe recipe: 2 iron ingots and 3 sticks make 2 throwing axes (was: iron axe and iron ingot in the smithing table)
+ - Thrown throwing axe plays a hit sound and breaks less often when hitting a block (25% instead of 30%)
+ - Knight armor, Knight Longsword and Spiked Mace are no longer fire resistant
+ - All items are now only in the mod's own creative tab
+ - New mod logo
