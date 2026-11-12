@@ -58,11 +58,18 @@ public class ThrowableAxeEntity extends PersistentProjectileEntity { // Korrigie
         }
     }
 
+    /** Spawns the axe as an ItemEntity and removes the projectile */
     private void dropAndDiscard(boolean broken) {
         ItemStack drop = broken ? new ItemStack(ModItems.THROWING_AXE_BROKEN) : new ItemStack(ModItems.THROWING_AXE);
-        ItemEntity itemEntity = new ItemEntity(this.getWorld(), this.getX(), this.getY(), this.getZ(), drop);
 
-        itemEntity.age = Integer.MAX_VALUE;
+        if (broken) {
+            this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        }
+
+        ItemEntity itemEntity = new ItemEntity(this.getWorld(), this.getX(), this.getY(), this.getZ(), drop);
+        itemEntity.setToDefaultPickupDelay();
+        itemEntity.setNeverDespawn();
 
         this.getWorld().spawnEntity(itemEntity);
         this.discard();
