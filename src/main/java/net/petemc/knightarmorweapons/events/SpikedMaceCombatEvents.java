@@ -46,7 +46,8 @@ public class SpikedMaceCombatEvents {
             if (!(player.getMainHandStack().getItem() instanceof SpikedMace)) return ActionResult.PASS;
             if (!(entity instanceof LivingEntity target)) return ActionResult.PASS;
 
-            if (target.isBlocking()) {
+            // Only if the shield would really block this hit (facing), like Forge's ShieldBlockEvent
+            if (target.blockedByShield(world.getDamageSources().playerAttack(player))) {
                 // Force shield offline (100-tick cooldown, identical to axe stagger but guaranteed)
                 if (target instanceof PlayerEntity blockerPlayer) {
                     blockerPlayer.getItemCooldownManager().set(Items.SHIELD, 100);

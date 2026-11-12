@@ -59,14 +59,14 @@ public class KnightArmorRenderer implements ArmorRenderer {
         KnightArmorModel<LivingEntity> armorModel = getModel();
 
         // Copy the vanilla animation pose to our model parts
-        copyRotation(contextModel.head,     armorModel.helmet);
-        copyRotation(contextModel.body,     armorModel.chestplate);
-        copyRotation(contextModel.rightArm, armorModel.right_arm);
-        copyRotation(contextModel.leftArm,  armorModel.left_arm);
-        copyRotation(contextModel.rightLeg, armorModel.right_leg);
-        copyRotation(contextModel.leftLeg,  armorModel.left_leg);
-        copyRotation(contextModel.rightLeg, armorModel.leggingsright);
-        copyRotation(contextModel.leftLeg,  armorModel.leggingsleft);
+        copyTransform(contextModel.head,     armorModel.helmet);
+        copyTransform(contextModel.body,     armorModel.chestplate);
+        copyTransform(contextModel.rightArm, armorModel.right_arm);
+        copyTransform(contextModel.leftArm,  armorModel.left_arm);
+        copyTransform(contextModel.rightLeg, armorModel.right_leg);
+        copyTransform(contextModel.leftLeg,  armorModel.left_leg);
+        copyTransform(contextModel.rightLeg, armorModel.leggingsright);
+        copyTransform(contextModel.leftLeg,  armorModel.leggingsleft);
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
                 RenderLayer.getArmorCutoutNoCull(TEXTURE));
@@ -91,11 +91,13 @@ public class KnightArmorRenderer implements ArmorRenderer {
         }
     }
 
-    /** Copies yaw/pitch/roll from one ModelPart to another. */
-    private static void copyRotation(ModelPart from, ModelPart to) {
-        to.pitch = from.pitch;
-        to.yaw   = from.yaw;
-        to.roll  = from.roll;
+    /**
+     * Copies pivot and rotation from the player model part, so the armor follows
+     * sneaking and riding poses. Same as Forge, where the parent model's
+     * copyPropertiesTo() overwrites the armor model's part poses.
+     */
+    private static void copyTransform(ModelPart from, ModelPart to) {
+        to.copyTransform(from);
     }
 }
 

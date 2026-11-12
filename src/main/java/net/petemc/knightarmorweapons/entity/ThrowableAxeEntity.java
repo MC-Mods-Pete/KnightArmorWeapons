@@ -32,6 +32,13 @@ public class ThrowableAxeEntity extends PersistentProjectileEntity { // Korrigie
         super(type, entity, world);
     }
 
+    /** Extra 1 HP of damage on every hit (Forge: doPostHurtEffects) */
+    @Override
+    protected void onHit(LivingEntity target) {
+        super.onHit(target);
+        target.setHealth(target.getHealth() - 1);
+    }
+
     @Override
     protected ItemStack asItemStack() {
         return new ItemStack(ModItems.THROWING_AXE);
