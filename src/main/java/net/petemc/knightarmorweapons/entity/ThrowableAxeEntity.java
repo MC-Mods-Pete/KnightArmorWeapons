@@ -1,6 +1,5 @@
 package net.petemc.knightarmorweapons.entity;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -57,20 +56,13 @@ public class ThrowableAxeEntity extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult pResult) {
-        // HP vor dem Treffer merken
-        float hpBefore = (pResult.getEntity() instanceof LivingEntity living) ? living.getHealth() : 0f;
-
         // Apply damage normally
         super.onHitEntity(pResult);
 
-        // Tatsächlichen Schaden berechnen und als Chat-Nachricht ausgeben
-        if (!this.level.isClientSide() && pResult.getEntity() instanceof LivingEntity target
-                && this.getOwner() instanceof Player shooter) {
-            float hpAfter = target.getHealth();
-            float actualDamage = hpBefore - hpAfter;
-            shooter.sendSystemMessage(Component.literal(
-                    "[DEBUG] Wurfaxt Schaden: " + String.format("%.2f", actualDamage)
-                    + " HP (" + target.getName().getString() + ")"));
+        // Hit sound
+        if (!this.level.isClientSide()) {
+            this.level.playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
 
         // 10% chance to break on entity hit
@@ -82,8 +74,8 @@ public class ThrowableAxeEntity extends AbstractArrow {
     protected void onHitBlock(BlockHitResult pResult) {
         // Don't stick in the ground – drop as a floating item instead
         super.onHitBlock(pResult);
-        // 30% chance to break on block hit
-        boolean broken = this.random.nextFloat() < 0.30f;
+        // 25% chance to break on block hit
+        boolean broken = this.random.nextFloat() < 0.25f;
         dropAndDiscard(broken);
     }
 
