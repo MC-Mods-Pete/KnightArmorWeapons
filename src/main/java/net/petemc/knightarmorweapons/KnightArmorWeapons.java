@@ -1,6 +1,8 @@
 package net.petemc.knightarmorweapons;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,8 +13,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import net.petemc.knightarmorweapons.entity.ModEntities;
-//import net.petemc.knightarmorweapons.events.ClientRenderEvents;
 import net.petemc.knightarmorweapons.items.ModItems;
 import org.slf4j.Logger;
 
@@ -31,27 +34,27 @@ public class KnightArmorWeapons
      */
     public static final boolean DAMAGE_DEBUG = false;
 
-    public static final CreativeModeTab TAB = new CreativeModeTab(MOD_ID) {
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(ModItems.KNIGHT_HELMET.get());
-        }
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID);
 
-        @Override
-        public void fillItemList(net.minecraft.core.NonNullList<ItemStack> items) {
-            items.add(new ItemStack(ModItems.KNIGHT_HELMET.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_CHESTPLATE.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_LEGGINGS.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_BOOTS.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_LONG_SWORD.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_WAR_SICKLE.get()));
-            items.add(new ItemStack(ModItems.SPIKED_MACE.get()));
-            items.add(new ItemStack(ModItems.THROWING_AXE.get()));
-            items.add(new ItemStack(ModItems.THROWING_AXE_BROKEN.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_LONG_SWORD_HANDLE.get()));
-            items.add(new ItemStack(ModItems.KNIGHT_LONG_SWORD_BLADE.get()));
-        }
-    };
+    public static final RegistryObject<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("knightarmorweapons",
+            () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup." + MOD_ID))
+                    .icon(() -> new ItemStack(ModItems.KNIGHT_HELMET.get()))
+                    .displayItems((parameters, output) -> {
+                        output.accept(ModItems.KNIGHT_HELMET.get());
+                        output.accept(ModItems.KNIGHT_CHESTPLATE.get());
+                        output.accept(ModItems.KNIGHT_LEGGINGS.get());
+                        output.accept(ModItems.KNIGHT_BOOTS.get());
+                        output.accept(ModItems.KNIGHT_LONG_SWORD.get());
+                        output.accept(ModItems.KNIGHT_WAR_SICKLE.get());
+                        output.accept(ModItems.SPIKED_MACE.get());
+                        output.accept(ModItems.THROWING_AXE.get());
+                        output.accept(ModItems.THROWING_AXE_BROKEN.get());
+                        output.accept(ModItems.KNIGHT_LONG_SWORD_HANDLE.get());
+                        output.accept(ModItems.KNIGHT_LONG_SWORD_BLADE.get());
+                    })
+                    .build());
 
     public KnightArmorWeapons(FMLJavaModLoadingContext context)
     {
@@ -60,6 +63,7 @@ public class KnightArmorWeapons
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
+        CREATIVE_MODE_TABS.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
 

@@ -32,7 +32,7 @@ public class HandScythe extends SwordItem {
         },
         3,      // attackDamageModifier  → total = 1 + 7 + 3 = 11 damage
         -2.9F,                     // attackSpeedModifier   → final speed = 4.0 + (-2.9) = 1.1F  (heavy & sluggish)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1));
+        new Item.Properties().stacksTo(1));
     }
 
     /** Keeps the item in the crafting grid when used as ingredient. */

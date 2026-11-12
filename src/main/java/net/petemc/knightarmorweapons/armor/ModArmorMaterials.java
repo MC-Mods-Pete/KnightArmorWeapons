@@ -2,7 +2,7 @@ package net.petemc.knightarmorweapons.armor;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -42,12 +42,12 @@ public enum ModArmorMaterials implements ArmorMaterial {
         this.repairIngredient = repairIngredient;
     }
 
-    public int getDurabilityForSlot(EquipmentSlot slot) {
-        return this.slotDurabilities[slot.getIndex()] * this.durabilityMultiplier;
+    public int getDurabilityForType(ArmorItem.Type type) {
+        return this.slotDurabilities[type.getSlot().getIndex()] * this.durabilityMultiplier;
     }
 
-    public int getDefenseForSlot(EquipmentSlot pSlot) {
-        return this.slotProtections[pSlot.getIndex()];
+    public int getDefenseForType(ArmorItem.Type type) {
+        return this.slotProtections[type.getSlot().getIndex()];
     }
 
     public @NotNull Ingredient getRepairIngredient() {
