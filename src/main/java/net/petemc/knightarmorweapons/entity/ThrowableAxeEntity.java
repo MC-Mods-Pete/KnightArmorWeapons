@@ -123,6 +123,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         }
     }
 
+    @SuppressWarnings("removal") // new ResourceLocation(...) keeps older Forge builds supported
     public static ThrowableAxeEntity shoot(Level world, LivingEntity entity, RandomSource random, float power, double damage, int knockback) {
         ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE.get(), entity, world);
         var look = entity.getViewVector(1.0F);
@@ -133,11 +134,12 @@ public class ThrowableAxeEntity extends AbstractArrow {
         entityarrow.setKnockback(knockback);
         world.addFreshEntity(entityarrow);
         world.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
-                (SoundEvent) ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse("block.metal.hit")),
+                (SoundEvent) ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.metal.hit")),
                 SoundSource.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + power / 2.0F);
         return entityarrow;
     }
 
+    @SuppressWarnings("removal") // new ResourceLocation(...) keeps older Forge builds supported
     public static ThrowableAxeEntity shoot(LivingEntity entity, LivingEntity target) {
         ThrowableAxeEntity entityarrow = new ThrowableAxeEntity(ModEntities.THROWABLE_AXE.get(), entity, entity.level);
         double dx = target.getX() - entity.getX();
@@ -150,7 +152,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         entityarrow.setShotFromCrossbow(false);
         entity.level.addFreshEntity(entityarrow);
         entity.level.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(),
-                (SoundEvent) ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse("block.metal.hit")),
+                (SoundEvent) ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.metal.hit")),
                 SoundSource.PLAYERS, 1.0F, 1.0F / (RandomSource.create().nextFloat() * 0.5F + 1.0F));
         return entityarrow;
     }

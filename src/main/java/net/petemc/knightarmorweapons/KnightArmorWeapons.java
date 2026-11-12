@@ -53,9 +53,10 @@ public class KnightArmorWeapons
         }
     };
 
-    public KnightArmorWeapons(FMLJavaModLoadingContext context)
+    @SuppressWarnings("removal") // no-arg constructor + FMLJavaModLoadingContext.get() keep older Forge builds supported
+    public KnightArmorWeapons()
     {
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);

@@ -58,10 +58,11 @@ public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity> {
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
     }
 
+    @SuppressWarnings("removal") // new ResourceLocation(...) keeps older Forge builds supported
     @Override
     public ResourceLocation getTextureLocation(ThrowableAxeEntity entity) {
         // Not used directly – ItemRenderer handles the texture
-        return ResourceLocation.fromNamespaceAndPath("minecraft", "textures/misc/white.png");
+        return new ResourceLocation("minecraft", "textures/misc/white.png");
     }
 }
 

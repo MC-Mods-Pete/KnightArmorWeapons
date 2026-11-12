@@ -16,7 +16,8 @@ import net.minecraft.world.entity.Entity;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
 public class KnightArmorModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(KnightArmorWeapons.MOD_ID, "modelknight_armor"), "main");
+    @SuppressWarnings("removal") // new ResourceLocation(...) keeps older Forge builds supported
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(KnightArmorWeapons.MOD_ID, "modelknight_armor"), "main");
     public final ModelPart chestplate;
     public final ModelPart right_leg;
     public final ModelPart left_leg;
