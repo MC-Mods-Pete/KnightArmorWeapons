@@ -1,8 +1,8 @@
 package net.petemc.knightarmorweapons.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.petemc.knightarmorweapons.items.KnightLongSword;
 import net.petemc.knightarmorweapons.items.SpikedMace;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,12 +18,12 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
 
-    @ModifyExpressionValue(
+    @WrapOperation(
         method = "attack(Lnet/minecraft/entity/Entity;)V",
         at = @At(value = "CONSTANT", args = "classValue=net/minecraft/item/SwordItem")
     )
-    private boolean knightmod_disableSweep(boolean isSword) {
-        Item held = ((PlayerEntity) (Object) this).getMainHandStack().getItem();
-        return isSword && !(held instanceof KnightLongSword) && !(held instanceof SpikedMace);
+    private boolean knightmod_disableSweep(Object item, Operation<Boolean> original) {
+        if (item instanceof KnightLongSword || item instanceof SpikedMace) return false;
+        return original.call(item);
     }
 }
