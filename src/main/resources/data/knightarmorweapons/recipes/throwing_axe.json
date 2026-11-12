@@ -1,12 +1,21 @@
 {
-  "type": "minecraft:smithing",
-  "base": {
-    "item": "minecraft:iron_axe"
+  "group": "weapons",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SI",
+    "SI",
+    "S "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "addition": {
-    "item": "minecraft:iron_ingot"
-  },
-  "result": {
-    "item": "knightarmorweapons:knight_throwing_axe"
+    "result": {
+      "item": "knightarmorweapons:knight_throwing_axe",
+      "count": 2
+    }
   }
-}
