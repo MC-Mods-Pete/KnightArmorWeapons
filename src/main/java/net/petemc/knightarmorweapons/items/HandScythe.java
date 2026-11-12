@@ -35,13 +35,6 @@ public class HandScythe extends SwordItem {
         new Item.Properties().tab(KnightArmorWeapons.TAB).stacksTo(1));
     }
 
-    /** Keeps the item in the crafting grid when used as ingredient. */
-    @Override
-    public boolean hasCraftingRemainingItem(ItemStack stack) { return true; }
-
-    @Override
-    public ItemStack getCraftingRemainingItem(ItemStack stack) { return new ItemStack(this); }
-
     @Override
     public boolean isRepairable(@NotNull ItemStack stack) { return false; }
 }

@@ -99,13 +99,5 @@ public class SpikedMace extends SwordItem {
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
-    public boolean hasCraftingRemainingItem(@Nonnull ItemStack stack) { return true; }
-
-    @Override
-    public @Nonnull ItemStack getCraftingRemainingItem(@Nonnull ItemStack stack) {
-        return new ItemStack(this);
-    }
-
-    @Override
     public boolean isRepairable(@Nonnull ItemStack stack) { return false; }
 }
