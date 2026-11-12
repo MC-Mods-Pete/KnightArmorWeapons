@@ -1,17 +1,15 @@
 package net.petemc.knightarmorweapons.events;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.items.KnightLongSword;
 
 /**
  * Handles all unique combat mechanics of the Knight Longsword.
- * Fabric migration: call applyCombatModifiers() from your LivingEntityHurt event listener.
+ * Called from LivingEntityMixin when a KnightLongSword performs a melee hit.
  *
  * Mechanics:
  *   B) Close-Quarters Penalty (Dead Zone)
@@ -22,29 +20,22 @@ import net.petemc.knightarmorweapons.items.KnightLongSword;
  */
 public class KnightLongSwordCombatEvents {
 
-    private static final double DEAD_ZONE_MAX   = 1.8;
-    private static final double SWEET_SPOT_MIN  = 3.5;
-    private static final double SWEET_SPOT_MAX  = 4.5;
+    private static final double DEAD_ZONE_MAX  = 1.8;
+    private static final double SWEET_SPOT_MIN = 3.5;
+    private static final double SWEET_SPOT_MAX = 4.5;
     private static final float DEAD_ZONE_FACTOR  = 0.60f;
     private static final float PRECISION_FACTOR  = 1.20f;
 
     /**
-     * Apply Longsword combat modifiers to a damage event.
-     * Call this from your Fabric LifeEntityHurtEvent listener when the attacker holds a KnightLongSword.
-     * Returns the modified damage amount.
+     * Modifies incoming damage according to the Longsword's distance mechanics.
+     * Called from LivingEntityMixin on every player attack with this weapon.
      */
-    public static float applyCombatModifiers(LivingEntity target, float originalDamage, Player attacker) {
-        DamageSource source = target.getLastDamageCause(); // or pass via event
-        if (source == null) return originalDamage;
-
-        Entity directAttacker = source.getDirectEntity();
-        if (!(directAttacker instanceof Player player)) return originalDamage;
-
-        ItemStack held = player.getMainHandItem();
+    public static float modifyDamage(LivingEntity target, float originalDamage, PlayerEntity attacker) {
+        ItemStack held = attacker.getMainHandStack();
         if (!(held.getItem() instanceof KnightLongSword)) return originalDamage;
 
         float damage = originalDamage;
-        double distance = player.distanceTo(target);
+        double distance = attacker.distanceTo(target);
         String zoneTag;
 
         if (distance < DEAD_ZONE_MAX) {
@@ -57,12 +48,12 @@ public class KnightLongSwordCombatEvents {
             zoneTag = String.format(" §7[Normal %.1fm]§f", distance);
         }
 
-        if (KnightArmorWeapons.DAMAGE_DEBUG && !target.level().isClientSide()) {
-            player.sendSystemMessage(Component.literal(
+        if (KnightArmorWeapons.DAMAGE_DEBUG && !target.getWorld().isClient) {
+            attacker.sendMessage(Text.literal(
                 String.format("§b[LongSword DEBUG]§f Raw: §c%.1f§f (§c♥%.1f§f)%s → Final: §a%.1f§f (§a♥%.1f§f)",
                     originalDamage, originalDamage / 2f,
                     zoneTag,
-                    damage, damage / 2f)));
+                    damage, damage / 2f)), false);
         }
 
         return damage;

@@ -61,7 +61,7 @@ public enum ModArmorMaterials implements ArmorMaterial {
     }
 
     @Override
-    public net.minecraft.recipe.Ingredient getRepairIngredient() {
+    public Ingredient getRepairIngredient() {
         return this.repairIngredient;
     }
 

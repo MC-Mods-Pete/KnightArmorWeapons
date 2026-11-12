@@ -12,8 +12,8 @@ public class ModEntities {
             Registries.ENTITY_TYPE,
             Identifier.of(KnightArmorWeapons.MOD_ID, "throwable_axe"),
             EntityType.Builder.<ThrowableAxeEntity>create(ThrowableAxeEntity::new, SpawnGroup.MISC)
-                    .sized(0.5f, 0.5f)
-                    .build()
+                    .setDimensions(0.5f, 0.5f)
+                    .build("throwable_axe")
     );
 
     /**

@@ -16,8 +16,14 @@
 	"entrypoints": {
 		"main": [
 			"net.petemc.knightarmorweapons.KnightArmorWeapons"
+		],
+		"client": [
+			"net.petemc.knightarmorweapons.client.KnightArmorWeaponsClient"
 		]
 	},
+	"mixins": [
+		"knightarmorweapons.mixins.json"
+	],
 	"depends": {
 		"fabricloader": "${fabric_version_range}",
 		"minecraft": "${mc_version_range}",
@@ -26,7 +32,6 @@
 		"cloth-config": ">=${cloth_config_version}"
 	},
 	"suggests": {
-		"modmenu": ">=${modmenu_version}",
-		"another-mod": "*"
+		"modmenu": ">=${modmenu_version}"
 	}
 }
