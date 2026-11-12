@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -52,7 +53,7 @@ public class SpikedMace extends SwordItem {
         },
         1,      // attackDamageModifier → total = 1 + 7 + 1 = 9.0 damage
         -3.2F,  // attackSpeedModifier  → final = 4.0 + (-3.2) = 0.8F (extremely slow)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1));
+        new Item.Properties().tab(KnightArmorWeapons.TAB).stacksTo(1));
     }
 
     // ─────────────────────────────────────────────────────────────────────────

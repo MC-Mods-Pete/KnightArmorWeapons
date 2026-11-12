@@ -22,9 +22,9 @@ public class ModItems {
     public static final RegistryObject<Item> THROWING_AXE_BROKEN = ITEMS.register("knight_throwing_axe_broken", ThrowingAxeBroken::new);
 
     public static final RegistryObject<Item> KNIGHT_LONG_SWORD_HANDLE = ITEMS.register("knight_long_sword_handle",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new Item(new Item.Properties().tab(KnightArmorWeapons.TAB).stacksTo(1)));
     public static final RegistryObject<Item> KNIGHT_LONG_SWORD_BLADE = ITEMS.register("knight_long_sword_blade",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new Item(new Item.Properties().tab(KnightArmorWeapons.TAB).stacksTo(1)));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);

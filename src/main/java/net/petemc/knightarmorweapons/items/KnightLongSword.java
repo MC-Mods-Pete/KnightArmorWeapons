@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class KnightLongSword extends SwordItem {
         },
         1,      // attackDamageModifier → total = 1 + 5 + 1 = 7.0 damage
         -2.6F,  // attackSpeedModifier  → final = 4.0 + (-2.6) = 1.4F (moderate, precise)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1));
+        new Item.Properties().tab(KnightArmorWeapons.TAB).stacksTo(1));
     }
 
     // ─────────────────────────────────────────────────────────────────────────

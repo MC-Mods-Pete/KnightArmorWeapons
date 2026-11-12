@@ -1,11 +1,11 @@
 package net.petemc.knightarmorweapons.items;
 
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,7 +32,7 @@ public class HandScythe extends SwordItem {
         },
         3,      // attackDamageModifier  → total = 1 + 7 + 3 = 11 damage
         -2.9F,                     // attackSpeedModifier   → final speed = 4.0 + (-2.9) = 1.1F  (heavy & sluggish)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1));
+        new Item.Properties().tab(KnightArmorWeapons.TAB).stacksTo(1));
     }
 
     /** Keeps the item in the crafting grid when used as ingredient. */
