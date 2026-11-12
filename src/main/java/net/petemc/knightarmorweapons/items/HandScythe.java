@@ -65,7 +65,10 @@ public class HandScythe extends SwordItem {
         }
 
         // C) Dynamic Cleave: hit up to 2 nearby enemies for 50% damage
-        float cleaveDamage = (float) player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.5f;
+        // Cleave damage = 50% of the final damage of this hit (same as Forge)
+        Float hitDamage = HandScytheCombatEvents.lastHitDamage.remove(target.getId());
+        float cleaveDamage = (hitDamage != null ? hitDamage
+                : (float) player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)) * 0.5f;
         DamageSource cleaveSource = target.getWorld().getDamageSources().playerAttack(player);
 
         List<LivingEntity> nearbyEnemies = target.getWorld().getEntitiesByClass(

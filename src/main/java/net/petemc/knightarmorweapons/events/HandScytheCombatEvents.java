@@ -9,7 +9,9 @@ import net.petemc.knightarmorweapons.items.HandScythe;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles the Armor-Penalty mechanic of the Hand Scythe.
@@ -31,6 +33,13 @@ public class HandScytheCombatEvents {
             Collections.synchronizedSet(new HashSet<>());
 
     /**
+     * Final damage of the last Hand Scythe hit per target entity ID.
+     * Written in modifyDamage(), read & removed in HandScythe.postHit() to compute the cleave damage
+     * (50% of the hit, same as Forge).
+     */
+    public static final Map<Integer, Float> lastHitDamage = new ConcurrentHashMap<>();
+
+    /**
      * Modifies incoming damage according to the Hand Scythe's Armor Penalty.
      * Called from LivingEntityMixin on every player attack that hits this target.
      */
@@ -44,6 +53,7 @@ public class HandScytheCombatEvents {
         int armorValue = target.getArmor();
         float armorPenaltyFactor = Math.min(armorValue * 0.025f, 0.50f);
         float damage = originalDamage * (1.0f - armorPenaltyFactor);
+        lastHitDamage.put(target.getId(), damage);
 
         if (KnightArmorWeapons.DAMAGE_DEBUG && !target.getWorld().isClient) {
             float armorPenaltyPct = Math.min(armorValue * 2.5f, 50f);

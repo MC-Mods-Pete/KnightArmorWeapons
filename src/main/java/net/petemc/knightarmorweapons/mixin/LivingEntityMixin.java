@@ -41,8 +41,8 @@ public abstract class LivingEntityMixin {
         // Recursion guard — skip if we are the one calling damage() below
         if (this.knightmod_inCustomDamage) return;
 
-        // Only modify player melee attacks
-        if (!(source.getAttacker() instanceof PlayerEntity player)) return;
+        // Only modify direct player attacks (same as Forge: source.getDirectEntity())
+        if (!(source.getSource() instanceof PlayerEntity player)) return;
 
         LivingEntity self = (LivingEntity) (Object) this;
         float newAmount = amount;
