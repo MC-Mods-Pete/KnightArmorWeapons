@@ -28,8 +28,7 @@
 		"fabricloader": "${fabric_version_range}",
 		"minecraft": "${mc_version_range}",
 		"java": "${java_version_range}",
-		"fabric-api": "*",
-		"cloth-config": ">=${cloth_config_version}"
+		"fabric-api": "*"
 	},
 	"suggests": {
 		"modmenu": ">=${modmenu_version}"
