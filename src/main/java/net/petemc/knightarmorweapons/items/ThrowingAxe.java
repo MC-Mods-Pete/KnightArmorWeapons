@@ -18,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.entity.ModEntities;
 import net.petemc.knightarmorweapons.entity.ThrowableAxeEntity;
 import org.jetbrains.annotations.NotNull;
@@ -76,9 +75,7 @@ public class ThrowingAxe extends Item {
     @Override
     public boolean postHit(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
         if (!attacker.getWorld().isClient && attacker instanceof PlayerEntity player) {
-            KnightArmorWeapons.LOGGER.info("Throwing Axe hit an entity!");
             if (attacker.getRandom().nextFloat() < 0.50f) {
-                KnightArmorWeapons.LOGGER.info("Throwing Axe broke on hit!");
                 attacker.getWorld().playSound(null,
                         attacker.getX(), attacker.getY(), attacker.getZ(),
                         SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
