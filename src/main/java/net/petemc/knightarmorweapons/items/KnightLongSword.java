@@ -97,13 +97,5 @@ public class KnightLongSword extends SwordItem {
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
-    public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) { return true; }
-
-    @Override
-    public @NotNull ItemStack getCraftingRemainingItem(@NotNull ItemStack stack) {
-        return new ItemStack(this);
-    }
-
-    @Override
     public boolean isRepairable(@NotNull ItemStack stack) { return false; }
 }
