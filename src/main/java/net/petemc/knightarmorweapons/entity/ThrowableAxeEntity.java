@@ -82,7 +82,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
     protected void onHitBlock(BlockHitResult pResult) {
         // Don't stick in the ground – drop as a floating item instead
         super.onHitBlock(pResult);
-        // 30% chance to break on block hit
+        // 25% chance to break on block hit
         boolean broken = this.random.nextFloat() < 0.25f;
         dropAndDiscard(broken);
     }
