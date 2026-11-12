@@ -8,6 +8,7 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
@@ -56,9 +57,19 @@ public class HandScytheCombatEvents {
      * If the attacker is wielding a Hand Scythe, cancel the block entirely
      * and record the target entity so onLivingHurt can apply the 50% penalty.
      */
-    // B) Shield Bypass is currently DISABLED
-    // @SubscribeEvent
-    // public static void onShieldBlock(ShieldBlockEvent event) { ... }
+    @SubscribeEvent
+    public static void onShieldBlock(ShieldBlockEvent event) {
+        LivingEntity blocker = event.getEntity();
+
+        // Cleave hits are blocked normally, only the main hit bypasses the shield
+        if (pendingCleave.contains(blocker.getId())) return;
+
+        if (!(event.getDamageSource().getDirectEntity() instanceof Player attacker)) return;
+        if (!(attacker.getMainHandItem().getItem() instanceof HandScythe)) return;
+
+        event.setCanceled(true); // shield does not block, no shield durability loss
+        pendingShieldBypass.add(blocker.getId());
+    }
 
 
     // ─────────────────────────────────────────────────────────────────────────
