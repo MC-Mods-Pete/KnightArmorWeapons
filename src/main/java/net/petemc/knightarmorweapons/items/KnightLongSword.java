@@ -49,7 +49,7 @@ public class KnightLongSword extends SwordItem {
         },
         1,      // attackDamageModifier → total = 1 + 5 + 1 = 7.0 damage
         -2.6F,  // attackSpeedModifier  → final = 4.0 + (-2.6) = 1.4F (moderate, precise)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1).fireResistant());
+        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1));
     }
 
     // ─────────────────────────────────────────────────────────────────────────

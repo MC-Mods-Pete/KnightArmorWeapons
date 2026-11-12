@@ -27,7 +27,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Helmet extends KnightArmor {
         public Helmet() {
-            super(EquipmentSlot.HEAD, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(EquipmentSlot.HEAD, (new Item.Properties()).tab(KnightArmorWeapons.TAB));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -56,7 +56,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Chestplate extends KnightArmor {
         public Chestplate() {
-            super(EquipmentSlot.CHEST, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(EquipmentSlot.CHEST, (new Item.Properties()).tab(KnightArmorWeapons.TAB));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -86,7 +86,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Leggings extends KnightArmor {
         public Leggings() {
-            super(EquipmentSlot.LEGS, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(EquipmentSlot.LEGS, (new Item.Properties()).tab(KnightArmorWeapons.TAB));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -116,7 +116,7 @@ public abstract class KnightArmor extends ArmorItem {
 
     public static class Boots extends KnightArmor {
         public Boots() {
-            super(EquipmentSlot.FEET, (new Item.Properties()).tab(KnightArmorWeapons.TAB).fireResistant());
+            super(EquipmentSlot.FEET, (new Item.Properties()).tab(KnightArmorWeapons.TAB));
         }
 
         public void initializeClient(Consumer<IClientItemExtensions> consumer) {

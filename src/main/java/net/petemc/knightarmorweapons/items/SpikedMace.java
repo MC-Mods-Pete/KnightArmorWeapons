@@ -52,7 +52,7 @@ public class SpikedMace extends SwordItem {
         },
         1,      // attackDamageModifier → total = 1 + 7 + 1 = 9.0 damage
         -3.2F,  // attackSpeedModifier  → final = 4.0 + (-3.2) = 0.8F (extremely slow)
-        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1).fireResistant());
+        new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
