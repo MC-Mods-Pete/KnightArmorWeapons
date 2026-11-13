@@ -14,8 +14,8 @@
       "item": "minecraft:iron_ingot"
     }
   },
-    "result": {
-      "item": "knightarmorweapons:knight_throwing_axe",
-      "count": 2
-    }
+  "result": {
+    "count": 2,
+    "id": "knightarmorweapons:knight_throwing_axe"
   }
+}

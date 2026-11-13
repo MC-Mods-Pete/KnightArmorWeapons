@@ -11,12 +11,11 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
 public class KnightArmorModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(KnightArmorWeapons.MOD_ID, "modelknight_armor"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(KnightArmorWeapons.id("modelknight_armor"), "main");
     public final ModelPart chestplate;
     public final ModelPart right_leg;
     public final ModelPart left_leg;
@@ -66,14 +65,14 @@ public class KnightArmorModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        chestplate.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        right_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        left_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        leggingsright.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        leggingsleft.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        left_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        right_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        helmet.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        chestplate.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        right_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        left_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        leggingsright.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        leggingsleft.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        left_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        right_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        helmet.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

@@ -62,7 +62,7 @@ public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity> {
     @Override
     public ResourceLocation getTextureLocation(ThrowableAxeEntity entity) {
         // Not used directly – ItemRenderer handles the texture
-        return ResourceLocation.fromNamespaceAndPath("minecraft", "textures/misc/white.png");
+        return ResourceLocation.withDefaultNamespace("textures/misc/white.png");
     }
 }
 

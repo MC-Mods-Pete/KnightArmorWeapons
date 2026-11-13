@@ -1,4 +1,4 @@
- {
+{
   "group": "weapons",
   "type": "minecraft:crafting_shaped",
   "pattern": [
@@ -15,7 +15,7 @@
     }
   },
   "result": {
-    "item": "knightarmorweapons:knight_spiked_mace",
-    "count": 1
+    "count": 1,
+    "id": "knightarmorweapons:knight_spiked_mace"
   }
 }

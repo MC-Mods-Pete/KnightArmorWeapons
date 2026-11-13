@@ -10,10 +10,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.ShieldBlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.items.SpikedMace;
 
@@ -36,7 +36,7 @@ import java.util.Set;
  *                            Stops sprinting elite zombies dead, giving the player
  *                            time to recover from the slow 0.8 attack speed.
  */
-@Mod.EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID)
 public class SpikedMaceCombatEvents {
 
     /**
@@ -60,7 +60,7 @@ public class SpikedMaceCombatEvents {
      *  - Mark the blocker so onLivingHurt can apply the 50% damage reduction.
      */
     @SubscribeEvent
-    public static void onShieldBlock(ShieldBlockEvent event) {
+    public static void onShieldBlock(LivingShieldBlockEvent event) {
         DamageSource source = event.getDamageSource();
 
         // Only trigger for direct player attacks
@@ -71,7 +71,7 @@ public class SpikedMaceCombatEvents {
         if (!(held.getItem() instanceof SpikedMace)) return;
 
         // ── Cancel the block: the mace spikes punch straight through ──
-        event.setCanceled(true);
+        event.setBlocked(false);
 
         // ── Apply shield cooldown to disable it (same length as axe stagger) ──
         LivingEntity blocker = event.getEntity();
@@ -87,7 +87,7 @@ public class SpikedMaceCombatEvents {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // A + B) SHIELD 50% + ARMOR SUNDER — applied in LivingHurtEvent
+    // A + B) SHIELD 50% + ARMOR SUNDER — applied in LivingDamageEvent.Pre
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
@@ -97,8 +97,8 @@ public class SpikedMaceCombatEvents {
      *   B) Armor Sunder: each armor point adds +2% damage (max +40% at 20 pts).
      */
     @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event) {
-        DamageSource source = event.getSource();
+    public static void onLivingHurt(LivingDamageEvent.Pre event) {
+        DamageSource source = event.getContainer().getSource();
 
         // Guard: must be a direct player attack
         Entity directAttacker = source.getDirectEntity();
@@ -108,7 +108,7 @@ public class SpikedMaceCombatEvents {
         if (!(attacker.getMainHandItem().getItem() instanceof SpikedMace)) return;
 
         LivingEntity target = event.getEntity();
-        float damage = event.getAmount();
+        float damage = event.getNewDamage();
         float rawDamage = damage; // snapshot before any modifiers
 
         // ────────────────────────────────────────────────────────────────────
@@ -133,7 +133,7 @@ public class SpikedMaceCombatEvents {
         float sunderBonus = Math.min(armorValue * 0.02f, 0.40f);      // 0.0 – 0.40
         damage *= (1.0f + sunderBonus);
 
-        event.setAmount(damage);
+        event.setNewDamage(damage);
 
         // ────────────────────────────────────────────────────────────────────
         // C) DAZE / CONCUSSION

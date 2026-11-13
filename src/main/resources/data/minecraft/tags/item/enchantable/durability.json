@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "knightarmorweapons:knight_helmet",
+    "knightarmorweapons:knight_chestplate",
+    "knightarmorweapons:knight_leggings",
+    "knightarmorweapons:knight_boots",
+    "knightarmorweapons:knight_long_sword",
+    "knightarmorweapons:knight_spiked_mace",
+    "knightarmorweapons:knight_war_sickle"
+  ]
+}

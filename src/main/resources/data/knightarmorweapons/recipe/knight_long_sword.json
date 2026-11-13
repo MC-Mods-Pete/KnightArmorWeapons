@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "knightarmorweapons:knight_long_sword",
-    "count": 1
+    "count": 1,
+    "id": "knightarmorweapons:knight_long_sword"
   }
 }

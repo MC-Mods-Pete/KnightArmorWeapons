@@ -7,10 +7,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.ShieldBlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.items.HandScythe;
 
@@ -31,7 +31,7 @@ import java.util.Set;
  *   C) Anti-Climb Counter — 50% chance to knock climbing Zombies off walls
  *   D) Dynamic Cleave     — hits up to 2 nearby enemies for 50% of armor-reduced damage
  */
-@Mod.EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID)
 public class HandScytheCombatEvents {
 
     /**
@@ -58,7 +58,7 @@ public class HandScytheCombatEvents {
      * and record the target entity so onLivingHurt can apply the 50% penalty.
      */
     @SubscribeEvent
-    public static void onShieldBlock(ShieldBlockEvent event) {
+    public static void onShieldBlock(LivingShieldBlockEvent event) {
         LivingEntity blocker = event.getEntity();
 
         // Cleave hits are blocked normally, only the main hit bypasses the shield
@@ -67,13 +67,13 @@ public class HandScytheCombatEvents {
         if (!(event.getDamageSource().getDirectEntity() instanceof Player attacker)) return;
         if (!(attacker.getMainHandItem().getItem() instanceof HandScythe)) return;
 
-        event.setCanceled(true); // shield does not block, no shield durability loss
+        event.setBlocked(false); // shield does not block, no shield durability loss
         pendingShieldBypass.add(blocker.getId());
     }
 
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Main LivingHurtEvent: A) Armor Penalty + B) Shield 50% + C) Anti-Climb + D) Cleave
+    // Main LivingDamageEvent.Pre: A) Armor Penalty + B) Shield 50% + C) Anti-Climb + D) Cleave
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
@@ -81,8 +81,8 @@ public class HandScytheCombatEvents {
      * Applies all Hand Scythe mechanics in sequence.
      */
     @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event) {
-        DamageSource source = event.getSource();
+    public static void onLivingHurt(LivingDamageEvent.Pre event) {
+        DamageSource source = event.getContainer().getSource();
 
         // ── Loop guard: ignore our own cleave damage to prevent infinite recursion ──
         if (pendingCleave.contains(event.getEntity().getId())) return;
@@ -105,7 +105,7 @@ public class HandScytheCombatEvents {
         // ────────────────────────────────────────────────────────────────────
         int armorValue = target.getArmorValue();                     // 0–20 range
         float armorPenaltyFactor = Math.min(armorValue * 0.025f, 0.50f); // 0.0 – 0.50
-        float rawDamage = event.getAmount(); // snapshot before modifiers
+        float rawDamage = event.getNewDamage(); // snapshot before modifiers
         float damage = rawDamage * (1.0f - armorPenaltyFactor);
 
         // ────────────────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ public class HandScytheCombatEvents {
         }
 
         // Apply the final modified damage
-        event.setAmount(damage);
+        event.setNewDamage(damage);
 
         // ── DEBUG: print damage breakdown to the attacker's chat ──
         if (KnightArmorWeapons.DAMAGE_DEBUG) {

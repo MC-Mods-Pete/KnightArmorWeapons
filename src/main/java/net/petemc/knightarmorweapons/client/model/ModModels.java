@@ -1,12 +1,14 @@
 package net.petemc.knightarmorweapons.client.model;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
-@EventBusSubscriber(bus = Bus.MOD, value = {Dist.CLIENT})
+// bus = MOD stays on purpose: older NeoForge 21.1 builds don't detect the bus automatically
+@SuppressWarnings("removal")
+@EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModModels {
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

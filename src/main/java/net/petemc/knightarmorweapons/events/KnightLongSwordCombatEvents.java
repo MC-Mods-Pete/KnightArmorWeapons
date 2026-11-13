@@ -6,10 +6,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.petemc.knightarmorweapons.KnightArmorWeapons;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.items.KnightLongSword;
 
@@ -33,7 +32,7 @@ import net.petemc.knightarmorweapons.items.KnightLongSword;
  *      → If the target is between 3.5 and 4.5 blocks away, deal 120% base damage.
  *        The blade lands a fully-extended precision thrust at maximum leverage.
  */
-@Mod.EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = KnightArmorWeapons.MOD_ID)
 public class KnightLongSwordCombatEvents {
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -66,8 +65,8 @@ public class KnightLongSwordCombatEvents {
      * Applies the range-based damage modifiers for the Knight Longsword.
      */
     @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event) {
-        DamageSource source = event.getSource();
+    public static void onLivingHurt(LivingDamageEvent.Pre event) {
+        DamageSource source = event.getContainer().getSource();
 
         // ── Guard: must be a direct player attack ──
         Entity directAttacker = source.getDirectEntity();
@@ -78,7 +77,7 @@ public class KnightLongSwordCombatEvents {
         if (!(held.getItem() instanceof KnightLongSword)) return;
 
         LivingEntity target = event.getEntity();
-        float rawDamage = event.getAmount(); // snapshot before modifiers
+        float rawDamage = event.getNewDamage(); // snapshot before modifiers
         float damage = rawDamage;
 
         // Calculate the 3D distance between attacker and target.
@@ -114,7 +113,7 @@ public class KnightLongSwordCombatEvents {
             zoneTag = String.format(" §7[Normal %.1fm]§f", distance);
         }
 
-        event.setAmount(damage);
+        event.setNewDamage(damage);
 
         // ── DEBUG: print damage breakdown to the attacker's chat ──
         if (KnightArmorWeapons.DAMAGE_DEBUG) {

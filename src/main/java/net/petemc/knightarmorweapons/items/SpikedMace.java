@@ -1,19 +1,18 @@
 package net.petemc.knightarmorweapons.items;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import java.util.UUID;
 
 /**
  * Spiked Mace — a heavy, short-range armor-crusher.
@@ -33,70 +32,36 @@ import java.util.UUID;
  */
 public class SpikedMace extends SwordItem {
 
-    /** Fixed UUID for the reach-reduction attribute modifier. */
-    private static final UUID REACH_MODIFIER_UUID =
-            UUID.fromString("c3d4e5f6-a1b2-7890-abcd-ef1234567891");
+    private static final ResourceLocation REACH_MODIFIER_ID = KnightArmorWeapons.id("mace_reach");
+
+    private static final Tier TIER = new Tier() {
+        @Override public int getUses()                { return 350; }
+        @Override public float getSpeed()             { return 6.0F; }
+        @Override public float getAttackDamageBonus() { return 7.0F; } // 1 + 7 + 1 = 9 total
+        // Replaces getLevel() == 3 (iron level) from 1.20.1
+        @Override public @NotNull TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_IRON_TOOL; }
+        @Override public int getEnchantmentValue()    { return 15; }
+        @Override public @NotNull Ingredient getRepairIngredient() {
+            return Ingredient.of(Items.IRON_INGOT, Items.FLINT);
+        }
+    };
 
     public SpikedMace() {
-        super(new Tier() {
-            @Override public int getUses()                { return 350; }
-            @Override public float getSpeed()             { return 6.0F; }
-            @Override public float getAttackDamageBonus() { return 7.0F; } // 1 + 7 + 1 = 9 total
-            @Override public int getLevel()               { return 3; }
-            @Override public int getEnchantmentValue()    { return 15; }
-            @Override public @NotNull Ingredient getRepairIngredient() {
-                return Ingredient.of(
-                        new ItemStack(Items.IRON_INGOT),
-                        new ItemStack(Items.FLINT));
-            }
-        },
-        1,      // attackDamageModifier → total = 1 + 7 + 1 = 9.0 damage
-        -3.2F,  // attackSpeedModifier  → final = 4.0 + (-3.2) = 0.8F (extremely slow)
-        new Item.Properties().stacksTo(1));
+        super(TIER, new Item.Properties().stacksTo(1).attributes(
+                SwordItem.createAttributes(TIER, 1, -3.2F) // 1 + 7 + 1 = 9.0 damage, speed 4.0 - 3.2 = 0.8
+                        // Minimal reach penalty: -0.3 blocks (was -1.0, reduced after playtest)
+                        .withModifierAdded(Attributes.ENTITY_INTERACTION_RANGE,
+                                new AttributeModifier(REACH_MODIFIER_ID, -0.3, AttributeModifier.Operation.ADD_VALUE),
+                                EquipmentSlotGroup.MAINHAND)));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // REACH: minimal -0.3 block penalty (keeps vanilla feel, still single-target)
-    // Default ATTACK_RANGE is 3.0 → with penalty: 2.7 blocks.
-    // Reduced from -1.0 after playtest: full penalty prevented spacing vs. fast mobs.
-    // ─────────────────────────────────────────────────────────────────────────
-
+    // NO SWEEP: heavy single-target weapon
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(
-            EquipmentSlot slot, ItemStack stack) {
-
-        if (slot == EquipmentSlot.MAINHAND) {
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
-                    ImmutableMultimap.builder();
-            // Keep base SwordItem modifiers (attack damage + attack speed)
-            builder.putAll(super.getAttributeModifiers(slot, stack));
-            // Minimal reach penalty: -0.3 blocks (was -1.0, reduced after playtest)
-            builder.put(
-                    ForgeMod.ENTITY_REACH.get(),
-                    new AttributeModifier(
-                            REACH_MODIFIER_UUID,
-                            "Spiked Mace Short Reach",
-                            -0.3,
-                            AttributeModifier.Operation.ADDITION));
-            return builder.build();
-        }
-        return super.getAttributeModifiers(slot, stack);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // NO SWEEP: disable the sword sweep action (single-target weapon only)
-    // ─────────────────────────────────────────────────────────────────────────
-
-    @Override
-    public boolean canPerformAction(ItemStack stack, ToolAction action) {
-        if (action == ToolActions.SWORD_SWEEP) return false; // heavy single-target, no sweep
+    public boolean canPerformAction(@NotNull ItemStack stack, @NotNull ItemAbility action) {
+        if (action == ItemAbilities.SWORD_SWEEP) return false;
         return super.canPerformAction(stack, action);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Standard item helpers
-    // ─────────────────────────────────────────────────────────────────────────
-
     @Override
-    public boolean isRepairable(@Nonnull ItemStack stack) { return false; }
+    public boolean isRepairable(@NotNull ItemStack stack) { return false; }
 }
