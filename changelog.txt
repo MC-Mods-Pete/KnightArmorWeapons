@@ -1,6 +1,13 @@
 Knight Armor and Weapons Changelog
 ==================================
 
+1.1.1-Forge-mc1.19.2
+--------------------
+Fixes
+ - Hand Scythe: the cleave no longer hits your own pets, armor stands, teammates or other players when PvP is off
+ - Crash when the mod was loaded on a Minecraft version other than 1.19.2, Forge now shows a clear message instead
+Changes
+ - Throwing axe: the last point of damage is no longer dealt as extra damage that ignores armor (damage is 12 instead of 11 + 1)
 1.1.0-Forge-mc1.19.2
 --------------------
 New
