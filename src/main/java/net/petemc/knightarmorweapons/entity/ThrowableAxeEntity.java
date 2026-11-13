@@ -56,12 +56,6 @@ public class ThrowableAxeEntity extends AbstractArrow {
     }
 
     @Override
-    protected void doPostHurtEffects(LivingEntity entity) {
-        super.doPostHurtEffects(entity);
-        entity.setHealth(entity.getHealth() - 1);
-    }
-
-    @Override
     protected void onHitEntity(EntityHitResult pResult) {
         // Store HP before the hit
         //float hpBefore = (pResult.getEntity() instanceof LivingEntity living) ? living.getHealth() : 0f;
