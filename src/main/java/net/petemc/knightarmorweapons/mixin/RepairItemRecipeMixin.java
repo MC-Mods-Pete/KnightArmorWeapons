@@ -1,8 +1,8 @@
 package net.petemc.knightarmorweapons.mixin;
 
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.recipe.RepairItemRecipe;
-import net.minecraft.world.World;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RepairItemRecipe;
+import net.minecraft.world.level.Level;
 import net.petemc.knightarmorweapons.items.WeaponRepair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,12 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(RepairItemRecipe.class)
 public abstract class RepairItemRecipeMixin {
 
-    @Inject(method = "matches(Lnet/minecraft/inventory/RecipeInputInventory;Lnet/minecraft/world/World;)Z",
+    @Inject(method = "matches(Lnet/minecraft/world/item/crafting/CraftingInput;Lnet/minecraft/world/level/Level;)Z",
             at = @At("HEAD"), cancellable = true)
-    private void knightmod_blockWeaponRepair(RecipeInputInventory inventory, World world,
-                                             CallbackInfoReturnable<Boolean> cir) {
-        for (int i = 0; i < inventory.size(); i++) {
-            if (WeaponRepair.isNonRepairable(inventory.getStack(i))) {
+    private void knightmod_blockWeaponRepair(CraftingInput input, Level level, CallbackInfoReturnable<Boolean> cir) {
+        for (int i = 0; i < input.size(); i++) {
+            if (WeaponRepair.isNonRepairable(input.getItem(i))) {
                 cir.setReturnValue(false);
                 return;
             }

@@ -17,10 +17,10 @@ out
 build
 .gradle
 
+# fabric / loom
+run
+remappedSrc
+
 # other
 eclipse
-run
-
-# Files from Forge MDK
-forge*changelog.txt
-.aider*
+*.bbmodel

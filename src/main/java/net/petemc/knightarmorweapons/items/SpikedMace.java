@@ -1,14 +1,18 @@
 package net.petemc.knightarmorweapons.items;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,50 +22,50 @@ import org.jetbrains.annotations.NotNull;
  *         but obliterates shields and heavy armor.
  *
  * Stats:
- *   Attack Damage : 9.0  (= 1 base + 7 tier bonus + 1 modifier)
- *   Attack Speed  : 0.8  (modifier = 0.8 - 4.0 = -3.2, slower than any axe)
- *   Sweep Attack  : DISABLED (PlayerEntityMixin)
- *   Reach         : -0.3 blocks (WeaponReach + GameRendererMixin)
+ *   Attack Damage : 9.0F  (= 1 base + 7 tier bonus + 1 modifier)
+ *   Attack Speed  : 0.8F  (modifier = 0.8 - 4.0 = -3.2F, slower than any axe)
+ *   Attack Range  : -0.3 block reach penalty (minimal, enough to space vs. fast mobs)
+ *   Sweep Attack  : DISABLED (single-target only)
  *
- * Unique mechanics:
- *   A) Shield Obliteration — guaranteed shield disable + 50% crushing damage (via AttackEntityCallback)
- *   B) Armor Sunder        — +2% damage per armor point (max +40% at 20 pts) (via LivingEntityMixin)
- *   C) Daze / Concussion   — Slowness III for 30 ticks on every hit (postHit)
+ * Unique mechanics handled in SpikedMaceCombatEvents:
+ *   A) Shield Obliteration — 100% guaranteed shield disable + 50% crushing damage
+ *   B) Armor Sunder        — +2% damage per armor point (max +40% at 20 pts)
  */
 public class SpikedMace extends SwordItem {
 
+    private static final ResourceLocation REACH_MODIFIER_ID = KnightArmorWeapons.id("mace_reach");
+
+    private static final Tier TIER = new Tier() {
+        @Override public int getUses()                { return 350; }
+        @Override public float getSpeed()             { return 6.0F; }
+        @Override public float getAttackDamageBonus() { return 7.0F; } // 1 + 7 + 1 = 9 total
+        // Replaces getLevel() == 3 (iron level) from 1.20.1
+        @Override public @NotNull TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_IRON_TOOL; }
+        @Override public int getEnchantmentValue()    { return 15; }
+        @Override public @NotNull Ingredient getRepairIngredient() {
+            return Ingredient.of(Items.IRON_INGOT, Items.FLINT);
+        }
+    };
+
     public SpikedMace() {
-        super(new ToolMaterial() {
-            @Override public int getDurability()              { return 350; }
-            @Override public float getMiningSpeedMultiplier() { return 6.0F; }
-            @Override public float getAttackDamage()          { return 7.0F; } // 1 + 7 + 1 = 9 total
-            @Override public int getMiningLevel()             { return 3; }
-            @Override public int getEnchantability()          { return 15; }
-            @Override public @NotNull Ingredient getRepairIngredient() {
-                return Ingredient.ofStacks(
-                        new ItemStack(Items.IRON_INGOT),
-                        new ItemStack(Items.FLINT));
-            }
-        },
-        1,      // attackDamage modifier → total = 1 + 7 + 1 = 9.0 damage
-        -3.2F,  // attackSpeed modifier  → final = 4.0 + (-3.2) = 0.8 (extremely slow)
-        new Item.Settings().maxCount(1));
+        super(TIER, new Item.Properties().stacksTo(1).attributes(
+                SwordItem.createAttributes(TIER, 1, -3.2F) // 1 + 7 + 1 = 9.0 damage, speed 4.0 - 3.2 = 0.8
+                        // Minimal reach penalty: -0.3 blocks (was -1.0, reduced after playtest)
+                        .withModifierAdded(Attributes.ENTITY_INTERACTION_RANGE,
+                                new AttributeModifier(REACH_MODIFIER_ID, -0.3, AttributeModifier.Operation.ADD_VALUE),
+                                EquipmentSlotGroup.MAINHAND)));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // C) DAZE / CONCUSSION — Slowness III for 30 ticks after every hit
-    // ─────────────────────────────────────────────────────────────────────────
-
+    // C) DAZE / CONCUSSION: Slowness III for 30 ticks after every hit
     @Override
-    public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        target.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.SLOWNESS,
-                30,   // duration in ticks (1.5 s)
-                2,    // amplifier 2 = Slowness III (0-indexed)
+    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
+        target.addEffect(new MobEffectInstance(
+                MobEffects.MOVEMENT_SLOWDOWN,
+                30,    // duration in ticks (1.5 s)
+                2,     // amplifier 2 = Slowness III (0-indexed)
                 false, // not ambient (shows particles)
                 true   // show icon in HUD
         ));
-        return super.postHit(stack, target, attacker);
+        return super.hurtEnemy(stack, target, attacker);
     }
 }
-

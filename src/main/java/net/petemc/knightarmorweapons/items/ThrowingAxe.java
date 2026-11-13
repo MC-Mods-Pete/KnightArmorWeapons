@@ -1,125 +1,96 @@
 package net.petemc.knightarmorweapons.items;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
-import net.minecraft.world.World;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.Level;
 import net.petemc.knightarmorweapons.entity.ModEntities;
 import net.petemc.knightarmorweapons.entity.ThrowableAxeEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class ThrowingAxe extends Item {
 
-    // Standard attack-modifier UUIDs (same as vanilla weapons)
-    private static final UUID ATTACK_DAMAGE_UUID =
-            UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-    private static final UUID ATTACK_SPEED_UUID =
-            UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
-
     public ThrowingAxe() {
-        super(new Item.Settings().maxCount(8));
-    }
-
-    // ── Attribute modifiers: attack damage +2, attack speed -3.3 ──────────────
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        if (slot == EquipmentSlot.MAINHAND) {
-            ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder =
-                    ImmutableMultimap.builder();
-            builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE,
-                    new EntityAttributeModifier(ATTACK_DAMAGE_UUID, "Weapon modifier", 2.0, Operation.ADDITION));
-            builder.put(EntityAttributes.GENERIC_ATTACK_SPEED,
-                    new EntityAttributeModifier(ATTACK_SPEED_UUID, "Weapon modifier", -3.3, Operation.ADDITION));
-            return builder.build();
-        }
-        return super.getAttributeModifiers(slot);
-    }
-
-    // ── Start charging (bow-like animation) ───────────────────────────────────
-
-    @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        user.setCurrentHand(hand);
-        return TypedActionResult.success(user.getStackInHand(hand));
+        super((new Item.Properties()).stacksTo(8).attributes(ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 2.0, Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, -3.3, Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .build()));
     }
 
     @Override
-    public UseAction getUseAction(@NotNull ItemStack stack) {
-        return UseAction.BOW;
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player pPlayer, @NotNull InteractionHand pUsedHand) {
+        pPlayer.startUsingItem(pUsedHand);
+        return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
     }
 
     @Override
-    public int getMaxUseTime(@NotNull ItemStack stack) {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack pStack) {
+        return UseAnim.BOW;
+    }
+
+    @Override
+    public int getUseDuration(@NotNull ItemStack pStack, @NotNull LivingEntity pEntity) {
         return 72000;
     }
 
-    // ── On melee hit: 50% chance the axe breaks ───────────────────────────────
-
     @Override
-    public boolean postHit(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
-        if (!attacker.getWorld().isClient && attacker instanceof PlayerEntity player) {
-            if (attacker.getRandom().nextFloat() < 0.50f) {
-                attacker.getWorld().playSound(null,
-                        attacker.getX(), attacker.getY(), attacker.getZ(),
-                        SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
+    public boolean hurtEnemy(@NotNull ItemStack pStack, @NotNull LivingEntity pTarget, LivingEntity pAttacker) {
+        if (!pAttacker.level().isClientSide() && pAttacker instanceof Player player) {
+            if (pAttacker.getRandom().nextFloat() < 0.50f) {
+                // 50% chance: axe breaks
+                pAttacker.level().playSound(null,
+                        pAttacker.getX(), pAttacker.getY(), pAttacker.getZ(),
+                        SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
 
-                if (!player.getAbilities().creativeMode) {
-                    stack.decrement(1);
+                if (!player.getAbilities().instabuild) {
+                    pStack.shrink(1);
                 }
                 ItemStack broken = new ItemStack(ModItems.THROWING_AXE_BROKEN);
-                if (!player.getInventory().insertStack(broken)) {
-                    player.dropStack(broken);
+                if (!player.getInventory().add(broken)) {
+                    player.drop(broken, false);
                 }
             }
         }
         return true;
     }
 
-    // ── Release: throw the axe ────────────────────────────────────────────────
-
     @Override
-    public void onStoppedUsing(@NotNull ItemStack stack, @NotNull World world,
-                               @NotNull LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity player)) return;
+    public void releaseUsing(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity, int pTimeLeft) {
+        if (!(pLivingEntity instanceof Player player)) return;
 
-        int charge = this.getMaxUseTime(stack) - remainingUseTicks;
+        int charge = this.getUseDuration(pStack, pLivingEntity) - pTimeLeft;
         if (charge < 10) return;
 
-        if (!world.isClient) {
+        if (!pLevel.isClientSide()) {
             ThrowableAxeEntity axe = new ThrowableAxeEntity(
-                    ModEntities.THROWABLE_AXE, player, world);
-            axe.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 1.9F, 1.0F);
+                    ModEntities.THROWABLE_AXE, player, pLevel);
+            axe.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.9F, 1.0F);
             // Damage = ceil(velocity * baseDamage): 6.0 * 1.9 = 11.4 -> 12 at launch.
             // Before: 5.5 base (11) + 1 HP via setHealth, which bypassed death handling (no loot/XP/death message).
-            axe.setDamage(6.0);
-            axe.setPunch(1);
+            axe.setBaseDamage(6.0);
+            axe.setKnockback(1);
             axe.setSilent(true);
-            axe.pickupType = ThrowableAxeEntity.PickupPermission.ALLOWED;
 
-            if (!player.getAbilities().creativeMode) {
-                stack.decrement(1);
+            axe.pickup = AbstractArrow.Pickup.ALLOWED;
+            if (!player.getAbilities().instabuild) {
+                pStack.shrink(1);
             }
 
-            world.spawnEntity(axe);
-            world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            pLevel.addFreshEntity(axe);
+            pLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
     }
 }

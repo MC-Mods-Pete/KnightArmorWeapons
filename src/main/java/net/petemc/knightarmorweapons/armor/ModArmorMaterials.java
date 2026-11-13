@@ -1,82 +1,53 @@
 package net.petemc.knightarmorweapons.armor;
 
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
-public enum ModArmorMaterials implements ArmorMaterial {
+import java.util.EnumMap;
+import java.util.List;
 
-    KNIGHT("knight",
-            new int[]{13, 15, 16, 11}, 22,
-            new int[]{3, 6, 7, 3}, 10,
-            SoundEvents.ITEM_ARMOR_EQUIP_IRON,
-            1.0F, 0.1F,
-            Ingredient.ofStacks(new ItemStack(Items.IRON_INGOT)));
+/**
+ * Since 1.20.5 armor materials are registry entries. Same values as the 1.20.1 versions.
+ * Durability is no longer part of the material: it is set per item via {@link #durability(ArmorItem.Type)},
+ * base values {boots 13, leggings 15, chestplate 16, helmet 11} x 22 (same as before).
+ */
+public class ModArmorMaterials {
+    public static final int DURABILITY_MULTIPLIER = 22;
 
-    private final String name;
-    private final int[] slotDurabilities;
-    private final int durabilityMultiplier;
-    private final int[] slotProtections;
-    private final int enchantmentValue;
-    private final SoundEvent sound;
-    private final float toughness;
-    private final float knockbackResistance;
-    private final Ingredient repairIngredient;
+    public static final Holder<ArmorMaterial> KNIGHT = Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL,
+            KnightArmorWeapons.id("knight"),
+            new ArmorMaterial(
+                    defense(3, 6, 7, 3),
+                    10,
+                    SoundEvents.ARMOR_EQUIP_IRON,
+                    () -> Ingredient.of(Items.IRON_INGOT),
+                    // The texture is chosen in client.renderer.KnightArmorRenderer, this layer name is only the vanilla fallback
+                    List.of(new ArmorMaterial.Layer(KnightArmorWeapons.id("knight"))),
+                    1.0F, 0.1F));
 
-    ModArmorMaterials(String name, int[] slotDurabilities, int durabilityMultiplier, int[] slotProtections, int enchantmentValue, SoundEvent sound, float toughness, float knockbackResistance, Ingredient repairIngredient) {
-        this.name = name;
-        this.slotDurabilities = slotDurabilities;
-        this.durabilityMultiplier = durabilityMultiplier;
-        this.slotProtections = slotProtections;
-        this.enchantmentValue = enchantmentValue;
-        this.sound = sound;
-        this.toughness = toughness;
-        this.knockbackResistance = knockbackResistance;
-        this.repairIngredient = repairIngredient;
+    public static int durability(ArmorItem.Type type) {
+        return switch (type) {
+            case BOOTS -> 13;
+            case LEGGINGS -> 15;
+            case CHESTPLATE -> 16;
+            case HELMET -> 11;
+            case BODY -> 16;
+        } * DURABILITY_MULTIPLIER;
     }
 
-    @Override
-    public int getDurability(ArmorItem.Type type) {
-        return this.slotDurabilities[type.getEquipmentSlot().getEntitySlotId()] * this.durabilityMultiplier;
-    }
-
-    @Override
-    public int getProtection(ArmorItem.Type type) {
-        return this.slotProtections[type.getEquipmentSlot().getEntitySlotId()];
-    }
-
-    @Override
-    public int getEnchantability() {
-        return this.enchantmentValue;
-    }
-
-    @Override
-    public SoundEvent getEquipSound() {
-        return this.sound;
-    }
-
-    @Override
-    public Ingredient getRepairIngredient() {
-        return this.repairIngredient;
-    }
-
-    @Override
-    public String getName() {
-        return KnightArmorWeapons.MOD_ID + ":" + this.name;
-    }
-
-    @Override
-    public float getToughness() {
-        return this.toughness;
-    }
-
-    @Override
-    public float getKnockbackResistance() {
-        return this.knockbackResistance;
+    private static EnumMap<ArmorItem.Type, Integer> defense(int boots, int leggings, int chestplate, int helmet) {
+        EnumMap<ArmorItem.Type, Integer> map = new EnumMap<>(ArmorItem.Type.class);
+        map.put(ArmorItem.Type.BOOTS, boots);
+        map.put(ArmorItem.Type.LEGGINGS, leggings);
+        map.put(ArmorItem.Type.CHESTPLATE, chestplate);
+        map.put(ArmorItem.Type.HELMET, helmet);
+        return map;
     }
 }

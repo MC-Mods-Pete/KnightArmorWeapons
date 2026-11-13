@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "knightarmorweapons:knight_helmet",
+    "knightarmorweapons:knight_chestplate",
+    "knightarmorweapons:knight_leggings",
+    "knightarmorweapons:knight_boots"
+  ]
+}

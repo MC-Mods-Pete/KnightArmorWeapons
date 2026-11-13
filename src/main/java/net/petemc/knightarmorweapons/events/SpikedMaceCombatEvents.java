@@ -1,13 +1,13 @@
 package net.petemc.knightarmorweapons.events;
 
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 import net.petemc.knightarmorweapons.items.SpikedMace;
 
@@ -16,85 +16,61 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Handles the two unique combat mechanics of the Spiked Mace.
+ * Spiked Mace mechanics (Forge: ShieldBlockEvent + LivingHurtEvent).
  *
- * Architecture (Fabric port):
- *   A) Shield Obliteration — registered via AttackEntityCallback (fires before hit).
- *                            Disables the blocker's shield and marks them for 50% damage.
- *   B) Armor Sunder        — modifyDamage() called from LivingEntityMixin.
- *   C) Daze / Concussion   — applied in SpikedMace.postHit().
+ *   A) Shield Obliteration: a raised shield is disabled for 100 ticks, 50% damage goes through.
+ *   B) Armor Sunder:        +2% damage per armor point (max +40% at 20 points).
+ *   C) Daze / Concussion:   every hit applies Slowness III for 30 ticks (in SpikedMace.hurtEnemy).
  *
- * Call register() from KnightArmorWeapons.onInitialize().
+ * The shield check runs in an attack callback, the damage in LivingEntityMixin.
  */
 public class SpikedMaceCombatEvents {
 
-    /**
-     * Thread-safe set of entity IDs whose shield was just obliterated.
-     * Written in the AttackEntityCallback, read & cleared in modifyDamage().
-     */
+    /** Entity IDs whose shield was just obliterated; read and cleared in modifyDamage. */
     private static final Set<Integer> obliteratedShields =
             Collections.synchronizedSet(new HashSet<>());
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Register Fabric event callbacks
-    // ────────────────────────────────────────────────────────────────────────
-
     public static void register() {
-        // A) SHIELD OBLITERATION — intercept attack BEFORE damage is applied
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
-            if (!(player.getMainHandStack().getItem() instanceof SpikedMace)) return ActionResult.PASS;
-            if (!(entity instanceof LivingEntity target)) return ActionResult.PASS;
+            if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+            if (!(player.getMainHandItem().getItem() instanceof SpikedMace)) return InteractionResult.PASS;
+            if (!(entity instanceof LivingEntity target)) return InteractionResult.PASS;
 
-            // Only if the shield would really block this hit (facing), like Forge's ShieldBlockEvent
-            if (target.blockedByShield(world.getDamageSources().playerAttack(player))) {
-                // Force shield offline (100-tick cooldown, identical to axe stagger but guaranteed)
-                if (target instanceof PlayerEntity blockerPlayer) {
-                    blockerPlayer.getItemCooldownManager().set(Items.SHIELD, 100);
+            if (target.isDamageSourceBlocked(world.damageSources().playerAttack(player))) {
+                if (target instanceof Player blockerPlayer) {
+                    blockerPlayer.getCooldowns().addCooldown(Items.SHIELD, 100);
                     blockerPlayer.stopUsingItem();
                 }
-                // Mark for 50% crushing-damage reduction in modifyDamage()
                 obliteratedShields.add(target.getId());
             }
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // A + B) SHIELD 50% + ARMOR SUNDER — called from LivingEntityMixin
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /**
-     * Modifies incoming damage for the two Spiked Mace passives.
-     * Called from LivingEntityMixin when the attacker holds a SpikedMace.
-     */
-    public static float modifyDamage(LivingEntity target, float originalDamage, PlayerEntity attacker) {
-        ItemStack held = attacker.getMainHandStack();
+    public static float modifyDamage(LivingEntity target, float originalDamage, Player attacker) {
+        ItemStack held = attacker.getMainHandItem();
         if (!(held.getItem() instanceof SpikedMace)) return originalDamage;
 
         float damage = originalDamage;
-        float rawDamage = damage;
 
-        // A) Shield Obliteration Step 2: 50% crushing impact
         boolean shieldObliterated = obliteratedShields.remove(target.getId());
         if (shieldObliterated) {
             damage *= 0.50f;
         }
 
-        // B) Armor Sunder: +2% per armor point, capped at +40%
-        int armorValue = target.getArmor();
+        int armorValue = target.getArmorValue();
         float sunderBonus = Math.min(armorValue * 0.02f, 0.40f);
         damage *= (1.0f + sunderBonus);
 
-        if (KnightArmorWeapons.DAMAGE_DEBUG) {
+        if (KnightArmorWeapons.DAMAGE_DEBUG && !target.level().isClientSide()) {
             String shieldTag = shieldObliterated ? " §c[Shield Obliterated ×0.5]§f" : "";
             float sunderPct = Math.min(armorValue * 2, 40);
             String sunderTag = armorValue > 0 ? String.format(" §e[Sunder +%.0f%%]§f", sunderPct) : "";
-            attacker.sendMessage(Text.literal(
+            attacker.sendSystemMessage(Component.literal(
                 String.format("§6[SpikedMace DEBUG]§f Raw: §c%.1f§f (§c♥%.1f§f)%s%s → Final: §a%.1f§f (§a♥%.1f§f)",
-                    rawDamage, rawDamage / 2f,
+                    originalDamage, originalDamage / 2f,
                     shieldTag, sunderTag,
-                    damage, damage / 2f)), false);
+                    damage, damage / 2f)));
         }
 
         return damage;

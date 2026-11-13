@@ -1,37 +1,36 @@
 package net.petemc.knightarmorweapons.items;
 
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.petemc.knightarmorweapons.armor.ModArmorMaterials;
 
-/**
- * Knight Armor item base class and inner sub-classes.
- *
- * Fabric port: Forge IClientItemExtensions / initializeClient / getArmorTexture
- * are replaced by net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer,
- * registered in KnightArmorWeaponsClient.
- * The custom 3D model (KnightArmorModel) and texture
- * (textures/entities/knight_armor.png) are applied there.
- */
+/** The 3D model and texture are rendered client-side by client.renderer.KnightArmorRenderer (Fabric ArmorRenderer). */
 public abstract class KnightArmor extends ArmorItem {
-
-    public KnightArmor(ArmorItem.Type type, Item.Settings settings) {
-        super(ModArmorMaterials.KNIGHT, type, settings);
+    public KnightArmor(ArmorItem.Type type, Properties properties) {
+        super(ModArmorMaterials.KNIGHT, type, properties.durability(ModArmorMaterials.durability(type)));
     }
 
     public static class Helmet extends KnightArmor {
-        public Helmet()     { super(ArmorItem.Type.HELMET,    new Item.Settings().maxCount(1)); }
+        public Helmet() {
+            super(ArmorItem.Type.HELMET, new Item.Properties());
+        }
     }
 
     public static class Chestplate extends KnightArmor {
-        public Chestplate() { super(ArmorItem.Type.CHESTPLATE, new Item.Settings().maxCount(1)); }
+        public Chestplate() {
+            super(ArmorItem.Type.CHESTPLATE, new Item.Properties());
+        }
     }
 
     public static class Leggings extends KnightArmor {
-        public Leggings()   { super(ArmorItem.Type.LEGGINGS,   new Item.Settings().maxCount(1)); }
+        public Leggings() {
+            super(ArmorItem.Type.LEGGINGS, new Item.Properties());
+        }
     }
 
     public static class Boots extends KnightArmor {
-        public Boots()      { super(ArmorItem.Type.BOOTS,      new Item.Settings().maxCount(1)); }
+        public Boots() {
+            super(ArmorItem.Type.BOOTS, new Item.Properties());
+        }
     }
 }

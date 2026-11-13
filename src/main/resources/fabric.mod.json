@@ -1,36 +1,25 @@
 {
-	"schemaVersion": 1,
-	"id": "${mod_id}",
-	"version": "${version}",
-	"name": "${mod_name}",
-	"description": "This mod adds Knight Armor and Weapons to Minecraft.",
-	"authors": [
-		"Pete MC Mods, mcmods.pete@gmail.com"
-	],
-	"contact": {
-
-	},
-	"license": "All rights reserved",
-	"icon": "icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"net.petemc.knightarmorweapons.KnightArmorWeapons"
-		],
-		"client": [
-			"net.petemc.knightarmorweapons.client.KnightArmorWeaponsClient"
-		]
-	},
-	"mixins": [
-		"knightarmorweapons.mixins.json"
-	],
-	"depends": {
-		"fabricloader": "${fabric_version_range}",
-		"minecraft": "${mc_version_range}",
-		"java": "${java_version_range}",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"modmenu": ">=${modmenu_version}"
-	}
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": ["${mod_authors}"],
+  "contact": {
+    "email": "${mod_contact_email}"
+  },
+  "license": "${mod_license}",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["net.petemc.knightarmorweapons.KnightArmorWeapons"],
+    "client": ["net.petemc.knightarmorweapons.client.KnightArmorWeaponsClient"]
+  },
+  "mixins": ["knightarmorweapons.mixins.json"],
+  "depends": {
+    "fabricloader": ">=${loader_version_min}",
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
 }

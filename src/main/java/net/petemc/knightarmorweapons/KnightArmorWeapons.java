@@ -2,13 +2,14 @@ package net.petemc.knightarmorweapons;
 
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.petemc.knightarmorweapons.entity.ModEntities;
 import net.petemc.knightarmorweapons.events.SpikedMaceCombatEvents;
 import net.petemc.knightarmorweapons.items.ModItems;
@@ -27,41 +28,39 @@ public class KnightArmorWeapons implements ModInitializer {
     public static final boolean DAMAGE_DEBUG = false;
 
     /** Creative Mode Tab for Knight Armor and Weapons items. */
-    public static ItemGroup TAB;
+    public static CreativeModeTab TAB;
+
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
 
     @Override
     public void onInitialize() {
-        // Register all items
-        ModItems.onInitializeItems();
+        ModItems.register();
+        ModEntities.register();
 
-        // Register entities
-        ModEntities.registerEntities();
+        TAB = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("knight_armor_weapons_tab"),
+                FabricItemGroup.builder()
+                        .title(Component.translatable("itemGroup." + MOD_ID))
+                        .icon(() -> new ItemStack(ModItems.KNIGHT_HELMET))
+                        .displayItems((parameters, output) -> {
+                            output.accept(ModItems.KNIGHT_HELMET);
+                            output.accept(ModItems.KNIGHT_CHESTPLATE);
+                            output.accept(ModItems.KNIGHT_LEGGINGS);
+                            output.accept(ModItems.KNIGHT_BOOTS);
+                            output.accept(ModItems.KNIGHT_LONG_SWORD);
+                            output.accept(ModItems.KNIGHT_WAR_SICKLE);
+                            output.accept(ModItems.SPIKED_MACE);
+                            output.accept(ModItems.THROWING_AXE);
+                            output.accept(ModItems.THROWING_AXE_BROKEN);
+                            output.accept(ModItems.KNIGHT_LONG_SWORD_HANDLE);
+                            output.accept(ModItems.KNIGHT_LONG_SWORD_BLADE);
+                        })
+                        .build());
 
-        // Register creative tab (Fabric API FabricItemGroup)
-        TAB = FabricItemGroup.builder()
-                .displayName(Text.translatable("itemGroup." + MOD_ID))
-                .icon(() -> new ItemStack(ModItems.KNIGHT_HELMET))
-                .entries((context, entries) -> {
-                    entries.add(ModItems.KNIGHT_HELMET);
-                    entries.add(ModItems.KNIGHT_CHESTPLATE);
-                    entries.add(ModItems.KNIGHT_LEGGINGS);
-                    entries.add(ModItems.KNIGHT_BOOTS);
-                    entries.add(ModItems.KNIGHT_LONG_SWORD);
-                    entries.add(ModItems.KNIGHT_WAR_SICKLE);
-                    entries.add(ModItems.SPIKED_MACE);
-                    entries.add(ModItems.THROWING_AXE);
-                    entries.add(ModItems.THROWING_AXE_BROKEN);
-                    entries.add(ModItems.KNIGHT_LONG_SWORD_HANDLE);
-                    entries.add(ModItems.KNIGHT_LONG_SWORD_BLADE);
-                })
-                .build();
-
-        Registry.register(Registries.ITEM_GROUP,
-                new Identifier(MOD_ID, "knight_armor_weapons_tab"), TAB);
-
-        // Register Fabric combat event callbacks (SpikedMace shield bypass via AttackEntityCallback)
+        // Spiked Mace shield obliteration (Forge: ShieldBlockEvent)
         SpikedMaceCombatEvents.register();
 
-        LOGGER.info("Knight Armor and Weapons initialized!");
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("Starting the mod " + NAME));
     }
 }

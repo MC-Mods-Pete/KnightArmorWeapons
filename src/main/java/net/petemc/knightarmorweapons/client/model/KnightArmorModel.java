@@ -1,24 +1,21 @@
 package net.petemc.knightarmorweapons.client.model;
 
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelTransform;
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.ModelPartBuilder;
-import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.model.Dilation;
-import net.minecraft.util.Identifier;
-import net.minecraft.entity.Entity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.world.entity.Entity;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
 public class KnightArmorModel<T extends Entity> extends EntityModel<T> {
-    // In Fabric/Yarn: ModelLayerLocation -> EntityModelLayer, ResourceLocation -> Identifier
-    public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(new Identifier(KnightArmorWeapons.MOD_ID, "modelknight_armor"), "main");
-
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(KnightArmorWeapons.id("modelknight_armor"), "main");
     public final ModelPart chestplate;
     public final ModelPart right_leg;
     public final ModelPart left_leg;
@@ -39,53 +36,43 @@ public class KnightArmorModel<T extends Entity> extends EntityModel<T> {
         this.helmet = root.getChild("helmet");
     }
 
-    public static TexturedModelData createBodyLayer() {
-        // Yarn nutzt ModelData statt MeshDefinition
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-
-        // CubeDeformation -> Dilation, PartPose -> ModelTransform
-        ModelPartData chestplate = modelPartData.addChild("chestplate", ModelPartBuilder.create().uv(0, 47).cuboid(-4.0F, 0.0F, -2.5F, 8.0F, 12.0F, 5.0F, new Dilation(0.0F)).uv(26, 46).cuboid(-4.0F, 0.0F, -2.5F, 8.0F, 12.0F, 6.0F, new Dilation(0.2F)), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
-        chestplate.addChild("sword", ModelPartBuilder.create().uv(50, 20).cuboid(-2.0F, -7.0F, 1.0F, 3.0F, 18.0F, 2.0F, new Dilation(0.0F)).uv(50, 17).cuboid(-4.0F, -8.0F, 1.0F, 7.0F, 1.0F, 2.0F, new Dilation(0.1F)).uv(50, 22).cuboid(-2.0F, -6.0F, -1.0F, 3.0F, 6.0F, 2.0F, new Dilation(0.0F)).uv(60, 24).cuboid(-1.5F, -13.9F, 1.0F, 2.0F, 6.0F, 2.0F, new Dilation(-0.2F)).uv(60, 20).cuboid(-1.5F, -15.7F, 1.0F, 2.0F, 2.0F, 2.0F, new Dilation(0.0F)), ModelTransform.of(2.0F, 6.0F, 3.5F, 0.0F, 0.0F, -0.6545F));
-
-        modelPartData.addChild("right_leg", ModelPartBuilder.create().uv(18, 12).mirrored().cuboid(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.0F)).mirrored(false).uv(34, 12).mirrored().cuboid(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.2F)).mirrored(false), ModelTransform.pivot(-2.0F, 12.0F, 0.0F));
-        modelPartData.addChild("left_leg", ModelPartBuilder.create().uv(18, 12).mirrored().cuboid(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.0F)).mirrored(false).uv(34, 12).cuboid(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.21F)), ModelTransform.pivot(2.0F, 12.0F, 0.0F));
-
-        ModelPartData leggingsright = modelPartData.addChild("leggingsright", ModelPartBuilder.create(), ModelTransform.pivot(-1.0F, 12.0F, 0.0F));
-        leggingsright.addChild("side_r1", ModelPartBuilder.create().uv(54, 0).mirrored().cuboid(-3.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new Dilation(0.11F)).mirrored(false), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.2182F));
-        leggingsright.addChild("side_r2", ModelPartBuilder.create().uv(0, 0).mirrored().cuboid(-3.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new Dilation(0.09F)).mirrored(false), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0873F));
-
-        ModelPartData leggingsleft = modelPartData.addChild("leggingsleft", ModelPartBuilder.create(), ModelTransform.pivot(1.0F, 12.0F, 0.0F));
-        leggingsleft.addChild("side_r3", ModelPartBuilder.create().uv(0, 0).cuboid(-0.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new Dilation(0.09F)).uv(0, 0).cuboid(-0.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new Dilation(0.1F)), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.0873F));
-        leggingsleft.addChild("side_r4", ModelPartBuilder.create().uv(54, 0).cuboid(-0.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new Dilation(0.11F)), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.2182F));
-
-        ModelPartData left_arm = modelPartData.addChild("left_arm", ModelPartBuilder.create().uv(18, 28).cuboid(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.0F)).uv(34, 28).cuboid(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.2F)), ModelTransform.pivot(5.0F, 2.0F, 0.0F));
-        left_arm.addChild("shoulder", ModelPartBuilder.create().uv(0, 20).cuboid(4.0F, -2.0F, -2.5F, 1.0F, 2.0F, 5.0F, new Dilation(0.0F)).uv(0, 38).cuboid(0.0F, 4.0F, -2.5F, 3.0F, 4.0F, 5.0F, new Dilation(0.0F)).uv(0, 27).cuboid(0.0F, -2.0F, -2.5F, 4.0F, 6.0F, 5.0F, new Dilation(0.0F)), ModelTransform.of(1.0F, -2.0F, 0.0F, 0.0F, 0.0F, -0.1745F));
-
-        ModelPartData right_arm = modelPartData.addChild("right_arm", ModelPartBuilder.create().uv(18, 28).mirrored().cuboid(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.0F)).mirrored(false).uv(34, 28).mirrored().cuboid(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new Dilation(0.2F)).mirrored(false), ModelTransform.pivot(-5.0F, 2.0F, 0.0F));
-        right_arm.addChild("shoulder2", ModelPartBuilder.create().uv(0, 20).mirrored().cuboid(-5.0F, -2.0F, -2.5F, 1.0F, 2.0F, 5.0F, new Dilation(0.0F)).mirrored(false).uv(0, 38).mirrored().cuboid(-3.0F, 4.0F, -2.5F, 3.0F, 4.0F, 5.0F, new Dilation(0.0F)).mirrored(false).uv(0, 27).mirrored().cuboid(-4.0F, -2.0F, -2.5F, 4.0F, 6.0F, 5.0F, new Dilation(0.0F)).mirrored(false), ModelTransform.of(-1.0F, -2.0F, 0.0F, 0.0F, 0.0F, 0.1745F));
-
-        ModelPartData helmet = modelPartData.addChild("helmet", ModelPartBuilder.create().uv(62, 33).cuboid(-4.5F, -8.5F, -4.5F, 9.0F, 9.51F, 9.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
-        helmet.addChild("cube_r1", ModelPartBuilder.create().uv(54, 51).cuboid(-5.3571F, -0.49F, -0.3562F, 5.0F, 9.5F, 3.0F, new Dilation(0.0F)), ModelTransform.of(4.0F, -8.0F, -4.0F, 0.0F, -0.6545F, 0.0F));
-        helmet.addChild("cube_r2", ModelPartBuilder.create().uv(54, 51).mirrored().cuboid(0.3044F, -0.48F, -0.3967F, 5.0F, 9.5F, 3.0F, new Dilation(0.0F)).mirrored(false), ModelTransform.of(-4.0F, -8.0F, -4.0F, 0.0F, 0.6545F, 0.0F));
-
-        return TexturedModelData.of(modelData, 128, 64);
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        PartDefinition chestplate = partdefinition.addOrReplaceChild("chestplate", CubeListBuilder.create().texOffs(0, 47).addBox(-4.0F, 0.0F, -2.5F, 8.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(26, 46).addBox(-4.0F, 0.0F, -2.5F, 8.0F, 12.0F, 6.0F, new CubeDeformation(0.2F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        chestplate.addOrReplaceChild("sword", CubeListBuilder.create().texOffs(50, 20).addBox(-2.0F, -7.0F, 1.0F, 3.0F, 18.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(50, 17).addBox(-4.0F, -8.0F, 1.0F, 7.0F, 1.0F, 2.0F, new CubeDeformation(0.1F)).texOffs(50, 22).addBox(-2.0F, -6.0F, -1.0F, 3.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(60, 24).addBox(-1.5F, -13.9F, 1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(-0.2F)).texOffs(60, 20).addBox(-1.5F, -15.7F, 1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, 6.0F, 3.5F, 0.0F, 0.0F, -0.6545F));
+        partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(18, 12).mirror(true).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false).texOffs(34, 12).mirror(true).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.2F)).mirror(false), PartPose.offset(-2.0F, 12.0F, 0.0F));
+        partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(18, 12).mirror(true).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false).texOffs(34, 12).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.21F)), PartPose.offset(2.0F, 12.0F, 0.0F));
+        PartDefinition leggingsright = partdefinition.addOrReplaceChild("leggingsright", CubeListBuilder.create(), PartPose.offset(-1.0F, 12.0F, 0.0F));
+        leggingsright.addOrReplaceChild("side_r1", CubeListBuilder.create().texOffs(54, 0).mirror(true).addBox(-3.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.11F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.2182F));
+        leggingsright.addOrReplaceChild("side_r2", CubeListBuilder.create().texOffs(0, 0).mirror(true).addBox(-3.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.09F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0873F));
+        PartDefinition leggingsleft = partdefinition.addOrReplaceChild("leggingsleft", CubeListBuilder.create(), PartPose.offset(1.0F, 12.0F, 0.0F));
+        leggingsleft.addOrReplaceChild("side_r3", CubeListBuilder.create().texOffs(0, 0).addBox(-0.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.09F)).texOffs(0, 0).addBox(-0.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.1F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.0873F));
+        leggingsleft.addOrReplaceChild("side_r4", CubeListBuilder.create().texOffs(54, 0).addBox(-0.5F, -0.5F, -2.5F, 4.0F, 10.0F, 5.0F, new CubeDeformation(0.11F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.2182F));
+        PartDefinition left_arm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(18, 28).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(34, 28).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.2F)), PartPose.offset(5.0F, 2.0F, 0.0F));
+        left_arm.addOrReplaceChild("shoulder", CubeListBuilder.create().texOffs(0, 20).addBox(4.0F, -2.0F, -2.5F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(0, 38).addBox(0.0F, 4.0F, -2.5F, 3.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(0, 27).addBox(0.0F, -2.0F, -2.5F, 4.0F, 6.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, -2.0F, 0.0F, 0.0F, 0.0F, -0.1745F));
+        PartDefinition right_arm = partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(18, 28).mirror(true).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false).texOffs(34, 28).mirror(true).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.2F)).mirror(false), PartPose.offset(-5.0F, 2.0F, 0.0F));
+        right_arm.addOrReplaceChild("shoulder2", CubeListBuilder.create().texOffs(0, 20).mirror(true).addBox(-5.0F, -2.0F, -2.5F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false).texOffs(0, 38).mirror(true).addBox(-3.0F, 4.0F, -2.5F, 3.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false).texOffs(0, 27).mirror(true).addBox(-4.0F, -2.0F, -2.5F, 4.0F, 6.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-1.0F, -2.0F, 0.0F, 0.0F, 0.0F, 0.1745F));
+        PartDefinition helmet = partdefinition.addOrReplaceChild("helmet", CubeListBuilder.create().texOffs(62, 33).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 9.51F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        helmet.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(54, 51).addBox(-5.3571F, -0.49F, -0.3562F, 5.0F, 9.5F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, -8.0F, -4.0F, 0.0F, -0.6545F, 0.0F));
+        helmet.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(54, 51).mirror(true).addBox(0.3044F, -0.48F, -0.3967F, 5.0F, 9.5F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-4.0F, -8.0F, -4.0F, 0.0F, 0.6545F, 0.0F));
+        return LayerDefinition.create(meshdefinition, 128, 64);
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        // In Yarn heißt setupAnim -> setAngles
+    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        chestplate.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        right_leg.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        left_leg.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        leggingsright.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        leggingsleft.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        left_arm.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        right_arm.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-        helmet.render(matrices, vertices, light, overlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        chestplate.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        right_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        left_leg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        leggingsright.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        leggingsleft.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        left_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        right_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        helmet.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

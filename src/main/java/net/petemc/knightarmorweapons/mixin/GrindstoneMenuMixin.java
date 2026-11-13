@@ -1,8 +1,8 @@
 package net.petemc.knightarmorweapons.mixin;
 
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.GrindstoneScreenHandler;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.item.ItemStack;
 import net.petemc.knightarmorweapons.items.WeaponRepair;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,19 +15,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Two knight weapons in the grindstone give no result (Forge: GrindstoneMenu.createResult()
  * clears the result for two non-repairable items). A single weapon can still be disenchanted.
  */
-@Mixin(GrindstoneScreenHandler.class)
-public abstract class GrindstoneScreenHandlerMixin {
+@Mixin(GrindstoneMenu.class)
+public abstract class GrindstoneMenuMixin {
 
-    @Shadow @Final Inventory input;
-    @Shadow @Final private Inventory result;
+    @Shadow @Final Container repairSlots;
+    @Shadow @Final private Container resultSlots;
 
-    @Inject(method = "updateResult", at = @At("TAIL"))
+    @Inject(method = "createResult", at = @At("TAIL"))
     private void knightmod_blockWeaponRepair(CallbackInfo ci) {
-        ItemStack first = this.input.getStack(0);
-        ItemStack second = this.input.getStack(1);
+        ItemStack first = this.repairSlots.getItem(0);
+        ItemStack second = this.repairSlots.getItem(1);
         if (!first.isEmpty() && !second.isEmpty()
                 && (WeaponRepair.isNonRepairable(first) || WeaponRepair.isNonRepairable(second))) {
-            this.result.setStack(0, ItemStack.EMPTY);
+            this.resultSlots.setItem(0, ItemStack.EMPTY);
         }
     }
 }
