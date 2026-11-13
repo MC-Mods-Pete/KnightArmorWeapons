@@ -1,6 +1,10 @@
 Knight Armor and Weapons Changelog
 ==================================
 
+1.1.1-Fabric-mc1.21.1
+---------------------
+New
+ - First release for Fabric 1.21.1, with the same content and behavior as the other versions: Knight armor with its own 3D model, Knight Longsword, Spiked Mace, Hand Scythe and throwing axe. Requires Fabric API
 1.1.0-Fabric-mc1.20.1
 ---------------------
 New
