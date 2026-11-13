@@ -1,6 +1,10 @@
 Knight Armor and Weapons Changelog
 ==================================
 
+1.1.1-NeoForge-mc1.21.1
+-----------------------
+New
+ - First release for NeoForge 1.21.1, with the same content and behavior as the Forge version: Knight armor with its own 3D model, Knight Longsword, Spiked Mace, Hand Scythe and throwing axe. Requires NeoForge 21.1 or newer
 1.1.0-Forge-mc1.20.1
 --------------------
 New
