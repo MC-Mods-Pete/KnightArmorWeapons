@@ -106,7 +106,9 @@ public class ThrowingAxe extends Item {
             ThrowableAxeEntity axe = new ThrowableAxeEntity(
                     ModEntities.THROWABLE_AXE, player, world);
             axe.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 1.9F, 1.0F);
-            axe.setDamage(5.5);
+            // Damage = ceil(velocity * baseDamage): 6.0 * 1.9 = 11.4 -> 12 at launch.
+            // Before: 5.5 base (11) + 1 HP via setHealth, which bypassed death handling (no loot/XP/death message).
+            axe.setDamage(6.0);
             axe.setPunch(1);
             axe.setSilent(true);
             axe.pickupType = ThrowableAxeEntity.PickupPermission.ALLOWED;
