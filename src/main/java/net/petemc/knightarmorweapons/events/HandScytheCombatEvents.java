@@ -4,6 +4,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -165,10 +167,7 @@ public class HandScytheCombatEvents {
         List<LivingEntity> nearbyEnemies = target.level.getEntitiesOfClass(
                 LivingEntity.class,
                 target.getBoundingBox().inflate(2.0),
-                nearby -> nearby != target
-                        && nearby != player
-                        && nearby.isAlive()
-                        && !nearby.isAlliedTo(player)
+                nearby -> isCleaveTarget(player, target, nearby)
         );
 
         int cleaveCount = 0;
@@ -187,5 +186,22 @@ public class HandScytheCombatEvents {
 
             cleaveCount++;
         }
+    }
+
+    /**
+     * Cleave only hits real enemies: not armor stands, allies, the player's own pets,
+     * and no other players when PvP is off (or same team without friendly fire).
+     */
+    private static boolean isCleaveTarget(Player player, LivingEntity target, LivingEntity other) {
+        if (other == player || other == target || !other.isAlive() || other instanceof ArmorStand) {
+            return false;
+        }
+        if (player.isAlliedTo(other) || other.isAlliedTo(player)) {
+            return false;
+        }
+        if (other instanceof OwnableEntity pet && player.getUUID().equals(pet.getOwnerUUID())) {
+            return false;
+        }
+        return !(other instanceof Player otherPlayer) || player.canHarmPlayer(otherPlayer);
     }
 }
