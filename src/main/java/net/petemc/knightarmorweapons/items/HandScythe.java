@@ -1,6 +1,8 @@
 package net.petemc.knightarmorweapons.items;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Tameable;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -74,7 +76,7 @@ public class HandScythe extends SwordItem {
         List<LivingEntity> nearbyEnemies = target.getWorld().getEntitiesByClass(
                 LivingEntity.class,
                 target.getBoundingBox().expand(2.0),
-                n -> n != target && n != player && n.isAlive() && !n.isTeammate(player));
+                n -> isCleaveTarget(player, target, n));
 
         int cleaveCount = 0;
         for (LivingEntity cleaveTarget : nearbyEnemies) {
@@ -90,6 +92,21 @@ public class HandScythe extends SwordItem {
 
         return super.postHit(stack, target, attacker);
     }
+
+    /**
+     * Cleave only hits real enemies: not armor stands, teammates, the player's own pets,
+     * and no other players when PvP is off (or same team without friendly fire).
+     */
+    private static boolean isCleaveTarget(PlayerEntity player, LivingEntity target, LivingEntity other) {
+        if (other == player || other == target || !other.isAlive() || other instanceof ArmorStandEntity) {
+            return false;
+        }
+        if (player.isTeammate(other) || other.isTeammate(player)) {
+            return false;
+        }
+        if (other instanceof Tameable pet && player.getUuid().equals(pet.getOwnerUuid())) {
+            return false;
+        }
+        return !(other instanceof PlayerEntity otherPlayer) || player.shouldDamagePlayer(otherPlayer);
+    }
 }
-
-
