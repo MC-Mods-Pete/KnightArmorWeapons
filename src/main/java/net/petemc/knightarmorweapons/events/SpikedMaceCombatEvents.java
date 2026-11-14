@@ -77,7 +77,7 @@ public class SpikedMaceCombatEvents {
         LivingEntity blocker = event.getEntity();
         if (blocker instanceof Player blockerPlayer) {
             // Add 100-tick cooldown (5 s) to the Shield item type
-            blockerPlayer.getCooldowns().addCooldown(Items.SHIELD, 100);
+            blockerPlayer.getCooldowns().addCooldown(new ItemStack(Items.SHIELD), 100);
             // Force them to stop blocking immediately
             blockerPlayer.stopUsingItem();
         }
@@ -143,7 +143,7 @@ public class SpikedMaceCombatEvents {
         //    ambient=false → shows particles; showIcon=true → visible in HUD.
         // ────────────────────────────────────────────────────────────────────
         target.addEffect(new MobEffectInstance(
-                MobEffects.MOVEMENT_SLOWDOWN,
+                MobEffects.SLOWNESS,
                 30,   // duration in ticks (1.5 seconds)
                 2,    // amplifier 2 = Slowness III (0-indexed)
                 false, // not ambient (shows particles)

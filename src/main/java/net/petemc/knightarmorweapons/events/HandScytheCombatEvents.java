@@ -1,12 +1,13 @@
 package net.petemc.knightarmorweapons.events;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -148,7 +149,7 @@ public class HandScytheCombatEvents {
                 double length = Math.sqrt(dx * dx + dz * dz);
                 if (length > 0.001) { dx /= length; dz /= length; }
                 zombie.setDeltaMovement(dx * 0.6, 0.35, dz * 0.6);
-                zombie.hasImpulse = true; // ensure client sees velocity change
+                zombie.needsSync = true; // ensure client sees velocity change
             }
         }
 
@@ -158,13 +159,14 @@ public class HandScytheCombatEvents {
         //    Uses EntityDamageSource with a custom ID to prevent recursion.
         //    Cleave damage = 50% of the already armor-reduced damage.
         // ────────────────────────────────────────────────────────────────────
+        if (!(target.level() instanceof ServerLevel level)) return;
         float cleaveDamage = damage * 0.50f;
 
         // Custom source: reuse player's standard attack source (loop guard uses pendingCleave set)
-        DamageSource cleaveSource = target.level().damageSources().playerAttack(player);
+        DamageSource cleaveSource = level.damageSources().playerAttack(player);
 
         // Find nearby living entities (2-block radius), excluding primary target and player
-        List<LivingEntity> nearbyEnemies = target.level().getEntitiesOfClass(
+        List<LivingEntity> nearbyEnemies = level.getEntitiesOfClass(
                 LivingEntity.class,
                 target.getBoundingBox().inflate(2.0),
                 nearby -> isCleaveTarget(player, target, nearby)
@@ -176,13 +178,14 @@ public class HandScytheCombatEvents {
 
             // Deal cleave damage (pendingCleave set prevents onLivingHurt from triggering again)
             pendingCleave.add(cleaveTarget.getId());
-            cleaveTarget.hurt(cleaveSource, cleaveDamage);
+            cleaveTarget.hurtServer(level, cleaveSource, cleaveDamage);
             pendingCleave.remove(cleaveTarget.getId());
 
             // Apply moderate knockback away from the player
             double dx = cleaveTarget.getX() - player.getX();
             double dz = cleaveTarget.getZ() - player.getZ();
-            cleaveTarget.knockback(0.4, -dx, -dz);
+            // Since 26.2 knockback also takes the damage source and amount (like vanilla's sweep attack)
+            cleaveTarget.knockback(0.4, -dx, -dz, cleaveSource, cleaveDamage);
 
             cleaveCount++;
         }
@@ -199,7 +202,8 @@ public class HandScytheCombatEvents {
         if (player.isAlliedTo(other) || other.isAlliedTo(player)) {
             return false;
         }
-        if (other instanceof OwnableEntity pet && player.getUUID().equals(pet.getOwnerUUID())) {
+        if (other instanceof OwnableEntity pet && pet.getOwnerReference() != null
+                && player.getUUID().equals(pet.getOwnerReference().getUUID())) {
             return false;
         }
         return !(other instanceof Player otherPlayer) || player.canHarmPlayer(otherPlayer);

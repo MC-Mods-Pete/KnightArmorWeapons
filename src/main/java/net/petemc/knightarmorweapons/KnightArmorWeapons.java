@@ -3,7 +3,7 @@ package net.petemc.knightarmorweapons;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
@@ -14,7 +14,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.petemc.knightarmorweapons.armor.ModArmorMaterials;
 import net.petemc.knightarmorweapons.entity.ModEntities;
 import net.petemc.knightarmorweapons.items.ModItems;
 import org.slf4j.Logger;
@@ -56,14 +55,14 @@ public class KnightArmorWeapons
                     })
                     .build());
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    // Minecraft 26.1 renamed ResourceLocation to Identifier
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public KnightArmorWeapons(IEventBus modEventBus, ModContainer modContainer)
     {
         CREATIVE_MODE_TABS.register(modEventBus);
-        ModArmorMaterials.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
 

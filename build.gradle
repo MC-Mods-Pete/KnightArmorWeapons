@@ -13,16 +13,11 @@ base {
     archivesName = mod_archives_name
 }
 
-// Minecraft 1.20.5+ ships Java 21 to end users, so the mod targets Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+// Minecraft 26.1 ships Java 25 to end users, so the mod targets Java 25.
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     version = project.neo_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
 
     runs {
         client {
@@ -43,7 +38,7 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
@@ -69,7 +64,6 @@ tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version      : minecraft_version, minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version, neo_version_range: neo_version_range,
-            loader_version_range   : loader_version_range,
             mod_id                 : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors            : mod_authors, mod_description: mod_description,
     ]

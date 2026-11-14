@@ -1,0 +1,19 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "knightarmorweapons:knight"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "knightarmorweapons:knight"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "knightarmorweapons:knight"
+      }
+    ]
+  }
+}

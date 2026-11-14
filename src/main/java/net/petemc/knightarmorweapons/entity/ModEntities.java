@@ -1,6 +1,7 @@
 package net.petemc.knightarmorweapons.entity;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
@@ -16,12 +17,12 @@ public class ModEntities {
     // Velocity updates are on by default in vanilla for this entity type (setShouldReceiveVelocityUpdates no longer exists).
     public static final DeferredHolder<EntityType<?>, EntityType<ThrowableAxeEntity>> THROWABLE_AXE = REGISTRY.register(
             "projectile_throwable_axe",
-            () -> EntityType.Builder.<ThrowableAxeEntity>of(ThrowableAxeEntity::new, MobCategory.MISC)
+            id -> EntityType.Builder.<ThrowableAxeEntity>of(ThrowableAxeEntity::new, MobCategory.MISC)
                     .clientTrackingRange(64)
                     .updateInterval(1)
                     .noSummon()
                     .sized(0.5F, 0.5F)
-                    .build("projectile_throwable_axe"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static void register(IEventBus eventBus) {
         REGISTRY.register(eventBus);

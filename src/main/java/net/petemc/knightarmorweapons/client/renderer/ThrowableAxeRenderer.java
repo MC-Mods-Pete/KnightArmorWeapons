@@ -2,67 +2,74 @@ package net.petemc.knightarmorweapons.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.petemc.knightarmorweapons.entity.ThrowableAxeEntity;
 import net.petemc.knightarmorweapons.items.ModItems;
 
-public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity> {
+/** Since 1.21.2 entity renderers work with render states (extracted every frame, then submitted). */
+public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity, ThrowableAxeRenderer.State> {
 
-    private final ItemRenderer itemRenderer;
+    public static class State extends EntityRenderState {
+        public final ItemStackRenderState item = new ItemStackRenderState();
+        public float yRot;
+        public float xRot;
+        public float spin;
+    }
+
+    private final ItemModelResolver itemModelResolver;
+    // Created lazily: renderers are built before item components are bound (ItemStack in the constructor fails since 26.1)
+    private ItemStack stack;
 
     public ThrowableAxeRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.itemRenderer = context.getItemRenderer();
+        this.itemModelResolver = context.getItemModelResolver();
         this.shadowRadius = 0.0F;
     }
 
     @Override
-    public void render(ThrowableAxeEntity entity, float entityYaw, float partialTick,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        poseStack.pushPose();
-
-        // Scale
-        poseStack.scale(1.0F, 1.0F, 1.0F);
-
-        // 1. Rotate horizontally to face flight direction (Yaw)
-        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot() + 180.0F));
-
-        // 2. Tilt vertically (Pitch)
-        poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
-
-        // 3. Forward tumble of the axe (freezes on impact)
-        float angle = Mth.lerp(partialTick, entity.lastRotation, entity.rotation);
-        poseStack.mulPose(Axis.XP.rotationDegrees(angle));
-
-        // Render item with NONE transform (no JSON transform = clean XY-plane, upright)
-        ItemStack stack = new ItemStack(ModItems.THROWING_AXE.get());
-        this.itemRenderer.renderStatic(
-                stack,
-                ItemDisplayContext.NONE,
-                packedLight,
-                OverlayTexture.NO_OVERLAY,
-                poseStack,
-                buffer,
-                entity.level(),
-                entity.getId()
-        );
-
-        poseStack.popPose();
-        super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+    public State createRenderState() {
+        return new State();
     }
 
     @Override
-    public ResourceLocation getTextureLocation(ThrowableAxeEntity entity) {
-        // Not used directly – ItemRenderer handles the texture
-        return ResourceLocation.withDefaultNamespace("textures/misc/white.png");
+    public void extractRenderState(ThrowableAxeEntity entity, State state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.yRot = entity.getYRot(partialTick);
+        state.xRot = entity.getXRot(partialTick);
+        state.spin = Mth.lerp(partialTick, entity.lastRotation, entity.rotation);
+        // Item model with NONE transform (no JSON transform = clean XY-plane, upright), like before
+        if (this.stack == null) {
+            this.stack = new ItemStack(ModItems.THROWING_AXE.get());
+        }
+        this.itemModelResolver.updateForNonLiving(state.item, this.stack, ItemDisplayContext.NONE, entity);
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        poseStack.pushPose();
+
+        // 1. Rotate horizontally to face flight direction (Yaw)
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot + 180.0F));
+
+        // 2. Tilt vertically (Pitch)
+        poseStack.mulPose(Axis.XP.rotationDegrees(-state.xRot));
+
+        // 3. Forward tumble of the axe (freezes on impact)
+        poseStack.mulPose(Axis.XP.rotationDegrees(state.spin));
+
+        state.item.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+
+        poseStack.popPose();
+        super.submit(state, poseStack, submitNodeCollector, camera);
     }
 }
-
