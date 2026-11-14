@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GrindstoneMenu.class)
 public abstract class GrindstoneMenuMixin {
 
-    @Shadow @Final Container repairSlots;
+    @Shadow @Final private Container repairSlots;
     @Shadow @Final private Container resultSlots;
 
     @Inject(method = "createResult", at = @At("TAIL"))

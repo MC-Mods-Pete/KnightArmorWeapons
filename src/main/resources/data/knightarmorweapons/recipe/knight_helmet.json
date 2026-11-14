@@ -6,15 +6,9 @@
     "I I"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "L": {
-      "item": "minecraft:leather"
-    },
-    "H": {
-      "item": "minecraft:iron_helmet"
-    }
+    "I": "minecraft:iron_ingot",
+    "L": "minecraft:leather",
+    "H": "minecraft:iron_helmet"
   },
   "result": {
     "count": 1,

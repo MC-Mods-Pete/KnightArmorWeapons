@@ -3,11 +3,11 @@ package net.petemc.knightarmorweapons;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.petemc.knightarmorweapons.entity.ModEntities;
@@ -30,8 +30,9 @@ public class KnightArmorWeapons implements ModInitializer {
     /** Creative Mode Tab for Knight Armor and Weapons items. */
     public static CreativeModeTab TAB;
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    // Minecraft 26.1 renamed ResourceLocation to Identifier
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class KnightArmorWeapons implements ModInitializer {
         ModEntities.register();
 
         TAB = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("knight_armor_weapons_tab"),
-                FabricItemGroup.builder()
+                FabricCreativeModeTab.builder()
                         .title(Component.translatable("itemGroup." + MOD_ID))
                         .icon(() -> new ItemStack(ModItems.KNIGHT_HELMET))
                         .displayItems((parameters, output) -> {
