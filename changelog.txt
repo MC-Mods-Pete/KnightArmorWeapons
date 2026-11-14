@@ -1,6 +1,10 @@
 Knight Armor and Weapons Changelog
 ==================================
 
+1.1.2-NeoForge-mc1.21.1
+-----------------------
+New
+ - Now also works on Minecraft 1.21 (NeoForge 21.0.167 or newer)
 1.1.1-NeoForge-mc1.21.1
 -----------------------
 New
