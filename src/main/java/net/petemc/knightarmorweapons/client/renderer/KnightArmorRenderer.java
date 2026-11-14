@@ -35,11 +35,9 @@ public class KnightArmorRenderer implements ArmorRenderer {
         KnightArmorModels.Piece model = this.models.create(slot, contextModel, babyProportions);
         Identifier texture = ARMOR_TEXTURE;
 
-        submitNodeCollector.order(1).submitModel(model, state, poseStack, RenderTypes.armorCutoutNoCull(texture),
-                light, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
-        if (stack.hasFoil()) {
-            submitNodeCollector.order(2).submitModel(model, state, poseStack, RenderTypes.armorEntityGlint(),
-                    light, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
-        }
+        // Since 26.3 the enchantment glint is drawn in the same pass (like vanilla's EquipmentLayerRenderer)
+        submitNodeCollector.order(1).submitModel(model, state, poseStack,
+                stack.hasFoil() ? RenderTypes.armorCutoutNoCullGlint(texture) : RenderTypes.armorCutoutNoCull(texture),
+                light, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor);
     }
 }
