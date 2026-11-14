@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -36,9 +37,9 @@ public class SpikedMaceCombatEvents {
             if (!(player.getMainHandItem().getItem() instanceof SpikedMace)) return InteractionResult.PASS;
             if (!(entity instanceof LivingEntity target)) return InteractionResult.PASS;
 
-            if (target.isDamageSourceBlocked(world.damageSources().playerAttack(player))) {
+            if (ShieldCheck.wouldBlock(target, world.damageSources().playerAttack(player), (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
                 if (target instanceof Player blockerPlayer) {
-                    blockerPlayer.getCooldowns().addCooldown(Items.SHIELD, 100);
+                    blockerPlayer.getCooldowns().addCooldown(new ItemStack(Items.SHIELD), 100);
                     blockerPlayer.stopUsingItem();
                 }
                 obliteratedShields.add(target.getId());

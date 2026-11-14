@@ -11,15 +11,15 @@
   "license": "${mod_license}",
   "icon": "icon.png",
   "environment": "*",
+  "mixins": ["knightarmorweapons.mixins.json"],
   "entrypoints": {
     "main": ["net.petemc.knightarmorweapons.KnightArmorWeapons"],
     "client": ["net.petemc.knightarmorweapons.client.KnightArmorWeaponsClient"]
   },
-  "mixins": ["knightarmorweapons.mixins.json"],
   "depends": {
     "fabricloader": ">=${loader_version_min}",
     "minecraft": "${minecraft_version_range}",
-    "java": ">=21",
-    "fabric-api": "*"
+    "java": ">=25",
+    "fabric-api": ">=${fabric_version_min}"
   }
 }

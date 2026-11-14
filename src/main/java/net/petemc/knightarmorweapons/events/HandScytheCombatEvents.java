@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  *   A) Armor Penalty: 2.5% damage reduction per armor point (max 50% at 20 points)
  *   B) Shield Bypass: the main hit goes through a raised shield but deals only 50% damage.
- *                     LivingEntityMixin makes the shield check in hurt() return false,
+ *                     LivingEntityMixin makes applyItemBlocking() in hurtServer() return 0,
  *                     cleave hits are blocked normally (same as Forge).
  */
 public class HandScytheCombatEvents {
@@ -59,8 +59,8 @@ public class HandScytheCombatEvents {
         float damage = originalDamage * (1.0f - armorPenaltyFactor);
 
         // Shield Bypass: the raised shield would block this hit, half the damage goes through.
-        // isDamageSourceBlocked() is called directly here, only the call inside hurt() is overridden.
-        boolean shieldBypassed = bypassesShield(target, source) && target.isDamageSourceBlocked(source);
+        // ShieldCheck repeats the vanilla block check, only the real block inside hurtServer() is skipped (see LivingEntityMixin).
+        boolean shieldBypassed = bypassesShield(target, source) && ShieldCheck.wouldBlock(target, source, originalDamage);
         if (shieldBypassed) {
             damage *= 0.50f;
         }

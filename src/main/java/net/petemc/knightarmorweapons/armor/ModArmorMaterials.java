@@ -1,53 +1,51 @@
 package net.petemc.knightarmorweapons.armor;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.EquipmentAsset;
+import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.petemc.knightarmorweapons.KnightArmorWeapons;
 
 import java.util.EnumMap;
-import java.util.List;
+import java.util.Map;
 
 /**
- * Since 1.20.5 armor materials are registry entries. Same values as the 1.20.1 versions.
- * Durability is no longer part of the material: it is set per item via {@link #durability(ArmorItem.Type)},
- * base values {boots 13, leggings 15, chestplate 16, helmet 11} x 22 (same as before).
+ * Since 1.21.2 armor materials are plain records again (no registry entry). Same values as the older versions:
+ * durability {11, 16, 15, 13} x 22 = Helmet 242, Chest 352, Legs 330, Boots 286, protection 3/6/7/3,
+ * toughness 1.0, knockback resistance 0.1, enchantability 10.
  */
 public class ModArmorMaterials {
     public static final int DURABILITY_MULTIPLIER = 22;
 
-    public static final Holder<ArmorMaterial> KNIGHT = Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL,
-            KnightArmorWeapons.id("knight"),
-            new ArmorMaterial(
-                    defense(3, 6, 7, 3),
-                    10,
-                    SoundEvents.ARMOR_EQUIP_IRON,
-                    () -> Ingredient.of(Items.IRON_INGOT),
-                    // The texture is chosen in client.renderer.KnightArmorRenderer, this layer name is only the vanilla fallback
-                    List.of(new ArmorMaterial.Layer(KnightArmorWeapons.id("knight"))),
-                    1.0F, 0.1F));
+    /** Repair material for the anvil: iron ingot (data/knightarmorweapons/tags/item/repairs_knight_armor.json) */
+    public static final TagKey<Item> REPAIRS_KNIGHT_ARMOR = TagKey.create(Registries.ITEM, KnightArmorWeapons.id("repairs_knight_armor"));
 
-    public static int durability(ArmorItem.Type type) {
-        return switch (type) {
-            case BOOTS -> 13;
-            case LEGGINGS -> 15;
-            case CHESTPLATE -> 16;
-            case HELMET -> 11;
-            case BODY -> 16;
-        } * DURABILITY_MULTIPLIER;
-    }
+    /**
+     * The armor is rendered with its own 3D model by client.renderer.KnightArmorRenderer, so there is no
+     * equipment asset file (assets/knightarmorweapons/equipment/knight.json). Vanilla treats a missing asset as "no layers".
+     */
+    public static final ResourceKey<EquipmentAsset> KNIGHT_ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, KnightArmorWeapons.id("knight"));
 
-    private static EnumMap<ArmorItem.Type, Integer> defense(int boots, int leggings, int chestplate, int helmet) {
-        EnumMap<ArmorItem.Type, Integer> map = new EnumMap<>(ArmorItem.Type.class);
-        map.put(ArmorItem.Type.BOOTS, boots);
-        map.put(ArmorItem.Type.LEGGINGS, leggings);
-        map.put(ArmorItem.Type.CHESTPLATE, chestplate);
-        map.put(ArmorItem.Type.HELMET, helmet);
+    public static final ArmorMaterial KNIGHT = new ArmorMaterial(
+            DURABILITY_MULTIPLIER,
+            defense(3, 6, 7, 3),
+            10,
+            SoundEvents.ARMOR_EQUIP_IRON,
+            1.0F, 0.1F,
+            REPAIRS_KNIGHT_ARMOR,
+            KNIGHT_ASSET);
+
+    private static Map<ArmorType, Integer> defense(int boots, int leggings, int chestplate, int helmet) {
+        Map<ArmorType, Integer> map = new EnumMap<>(ArmorType.class);
+        map.put(ArmorType.BOOTS, boots);
+        map.put(ArmorType.LEGGINGS, leggings);
+        map.put(ArmorType.CHESTPLATE, chestplate);
+        map.put(ArmorType.HELMET, helmet);
         return map;
     }
 }

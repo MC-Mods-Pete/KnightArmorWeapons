@@ -6,9 +6,7 @@
     "0"
   ],
   "key": {
-    "0": {
-      "item": "minecraft:iron_ingot"
-    }
+    "0": "minecraft:iron_ingot"
   },
   "result": {
     "count": 1,

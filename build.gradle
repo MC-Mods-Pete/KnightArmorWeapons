@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -8,10 +8,6 @@ group = project.mod_group_id
 
 base {
     archivesName = project.mod_archives_name
-}
-
-repositories {
-    maven { url = 'https://maven.parchmentmc.org' }
 }
 
 loom {
@@ -24,21 +20,17 @@ loom {
 }
 
 dependencies {
+    // Minecraft 26.1+ is no longer obfuscated: no mappings, the code uses Mojang's names directly
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    // Mojang mappings + Parchment, like the Forge versions -> the code stays (almost) identical
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
-    }
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
     var replaceProperties = [
             mod_id: mod_id, mod_name: mod_name, mod_version: mod_version, mod_license: mod_license,
             mod_authors: mod_authors, mod_contact_email: mod_contact_email, mod_description: mod_description,
-            minecraft_version_range: minecraft_version_range, loader_version_min: loader_version_min,
+            minecraft_version_range: minecraft_version_range, loader_version_min: loader_version_min, fabric_version_min: fabric_version_min,
     ]
     inputs.properties replaceProperties
 
@@ -47,15 +39,15 @@ processResources {
     }
 }
 
-// Minecraft 1.20.5+ ships Java 21 to end users, so the mod targets Java 21.
+// Minecraft 26.1 requires Java 25
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
-    it.options.release = 21
+    it.options.release = 25
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
