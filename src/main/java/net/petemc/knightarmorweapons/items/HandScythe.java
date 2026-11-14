@@ -1,14 +1,13 @@
 package net.petemc.knightarmorweapons.items;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.ToolMaterial;
+import net.petemc.knightarmorweapons.KnightArmorWeapons;
+
 
 /**
  * Hand Scythe — a heavy crowd-control weapon for unarmored hordes.
@@ -21,23 +20,27 @@ import org.jetbrains.annotations.NotNull;
  *  B) Anti-Climb Counter — 50% chance to knock climbing Zombies off walls
  *  C) Dynamic Cleave     — hits up to 2 extra enemies within 2 blocks for 50% damage
  */
-public class HandScythe extends SwordItem {
+public class HandScythe extends Item {
 
-    private static final Tier TIER = new Tier() {
-        @Override public int getUses()                             { return 200; }
-        @Override public float getSpeed()                          { return 8.0F; }
-        @Override public float getAttackDamageBonus()              { return 4.0F; }
-        // Replaces getLevel() == 3 (iron level) from 1.20.1
-        @Override public @NotNull TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_IRON_TOOL; }
-        @Override public int getEnchantmentValue()                 { return 30; }
-        @Override public @NotNull Ingredient getRepairIngredient() { return Ingredient.of(); }
-    };
+    /** The Hand Scythe can not be repaired in the anvil (empty tag: data/knightarmorweapons/tags/item/repairs_knight_scythe.json) */
+    public static final TagKey<Item> REPAIRS_KNIGHT_SCYTHE = TagKey.create(Registries.ITEM, KnightArmorWeapons.id("repairs_knight_scythe"));
 
-    public HandScythe() {
-        // attackDamageModifier 3, attackSpeedModifier -2.9 → final speed 4.0 - 2.9 = 1.1 (heavy & sluggish)
-        super(TIER, new Item.Properties().stacksTo(1).attributes(SwordItem.createAttributes(TIER, 3, -2.9F)));
+    // Same values as the older versions: 200 uses, mining speed 8, +4 damage, iron mining level, enchantability 30
+    static final ToolMaterial MATERIAL = new ToolMaterial(
+            BlockTags.INCORRECT_FOR_IRON_TOOL, 200, 8.0F, 4.0F, 30, REPAIRS_KNIGHT_SCYTHE);
+
+    public HandScythe(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
 
+    /** 1 (player) + 3 + 4 = 8 damage, speed 4.0 - 2.9 = 1.1 (heavy & sluggish). */
+    static Item.Properties properties() {
+        return new Item.Properties().sword(MATERIAL, 3.0F, -2.9F);
+    }
+
+    // Not combinable in the crafting grid or the grindstone (Forge 1.20.1: isRepairable() = false), anvil repair still works
     @Override
-    public boolean isRepairable(@NotNull ItemStack stack) { return false; }
+    public boolean isCombineRepairable(ItemStack stack) {
+        return false;
+    }
 }

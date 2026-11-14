@@ -8,7 +8,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -113,7 +113,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
                 this.level(), this.getX(), this.getY(), this.getZ(), drop
         );
         itemEntity.setDefaultPickUpDelay();
-        itemEntity.lifespan = Integer.MAX_VALUE;  // never despawn
+        itemEntity.setUnlimitedLifetime();  // never despawn
         this.level().addFreshEntity(itemEntity);
         this.discard();
     }
@@ -127,7 +127,7 @@ public class ThrowableAxeEntity extends AbstractArrow {
         lastRotation = rotation;
         super.tick();
         // Only spin while the axe is in flight, not when stuck in the ground
-        if (!inGround) {
+        if (!this.isInGround()) {
             rotation += 20.0F;
         }
     }

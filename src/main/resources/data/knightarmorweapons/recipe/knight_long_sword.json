@@ -6,12 +6,8 @@
     "1"
   ],
   "key": {
-    "0": {
-      "item": "knightarmorweapons:knight_long_sword_blade"
-    },
-    "1": {
-      "item": "knightarmorweapons:knight_long_sword_handle"
-    }
+    "0": "knightarmorweapons:knight_long_sword_blade",
+    "1": "knightarmorweapons:knight_long_sword_handle"
   },
   "result": {
     "count": 1,
