@@ -36,8 +36,8 @@ public class ThrowingAxe extends Item {
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack pStack) {
-        // TRIDENT = the old "raise to throw" animation (SPEAR is the new spear attack animation since 26.1)
-        return ItemUseAnimation.TRIDENT;
+        // BOW pulls the item towards the player (same as before 26.1). TRIDENT raises it far up, out of the screen.
+        return ItemUseAnimation.BOW;
     }
 
     @Override
