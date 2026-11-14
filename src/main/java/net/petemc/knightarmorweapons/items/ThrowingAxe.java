@@ -1,6 +1,7 @@
 package net.petemc.knightarmorweapons.items;
 
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Prediction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -59,7 +60,7 @@ public class ThrowingAxe extends Item {
                 }
                 ItemStack broken = new ItemStack(ModItems.THROWING_AXE_BROKEN.get());
                 if (!player.getInventory().add(broken)) {
-                    player.drop(broken, false);
+                    player.drop(broken, false, Prediction.SERVER_ONLY);
                 }
             }
         }

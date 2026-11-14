@@ -59,13 +59,13 @@ public class ThrowableAxeRenderer extends EntityRenderer<ThrowableAxeEntity, Thr
         poseStack.pushPose();
 
         // 1. Rotate horizontally to face flight direction (Yaw)
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot + 180.0F));
+        poseStack.rotateDegrees(Axis.YP, state.yRot + 180.0F);
 
         // 2. Tilt vertically (Pitch)
-        poseStack.mulPose(Axis.XP.rotationDegrees(-state.xRot));
+        poseStack.rotateDegrees(Axis.XP, -state.xRot);
 
         // 3. Forward tumble of the axe (freezes on impact)
-        poseStack.mulPose(Axis.XP.rotationDegrees(state.spin));
+        poseStack.rotateDegrees(Axis.XP, state.spin);
 
         state.item.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
 
