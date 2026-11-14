@@ -1,6 +1,12 @@
 Knight Armor and Weapons Changelog
 ==================================
 
+1.1.2-Fabric-mc1.21.1
+---------------------
+Fixes
+ - Crash at startup on Minecraft 1.21.2 and newer: the mod now only loads on Minecraft 1.21 and 1.21.1, other versions show a clear message instead
+Changes
+ - Now also works on Minecraft 1.21
 1.1.1-Fabric-mc1.21.1
 ---------------------
 New
